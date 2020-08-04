@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  backend:
+    container_name: backend
+    image: itsv-asistencia-backend
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - 8000:8000
+
+  frontend:
+    container_name: frontend
+    image: itsv-asistencia-frontend
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 8080:80

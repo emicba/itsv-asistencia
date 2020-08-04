@@ -1,6 +1,9 @@
-FROM  python:3.8.2-alpine
+FROM python:3.8-alpine
+EXPOSE 8000
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ADD requirements.txt .
+RUN python -m pip install -r requirements.txt
 WORKDIR /app
-COPY requirements.txt ./
-RUN pip install -r requirements.txt
-COPY . ./
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+ADD . /app
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi"]
