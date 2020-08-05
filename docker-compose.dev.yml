@@ -11,6 +11,7 @@ services:
     command: -c "python manage.py runserver 0.0.0.0:8000"
     environment:
       DJANGO_DEBUG: 1
+    env_file: .env
     volumes:
       - ./backend:/app
     ports:
