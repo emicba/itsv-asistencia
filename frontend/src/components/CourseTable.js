@@ -7,7 +7,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import CourseDataService from '../services/CourseService';
 
 const useStyles = makeStyles({
   table: {
@@ -15,12 +14,10 @@ const useStyles = makeStyles({
   },
 });
 
-const BasicTable = () => {
+const CourseTable = () => {
   const classes = useStyles();
 
   const [courses, setCourses] = useState([]);
-  const [currentCourse, setCurrentCourse] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(-1);
   const [searchName, setSearchName] = useState('');
 
   useEffect(() => {
@@ -39,33 +36,11 @@ const BasicTable = () => {
     setCourses(data);
   };
 
-  const refreshList = () => {
-    retrieveCourses();
-    setCurrentCourse(null);
-    setCurrentIndex(-1);
-  };
-
-  const setActiveCourse = (course, index) => {
-    setCurrentCourse(course);
-    setCurrentIndex(index);
-  };
-
-  const removeAllCourses = (course) => {
-    fetch(`http://localhost:8000/courses?name=${course}`, {
+  const removeCourses = (course) => {
+    const res = fetch(`http://localhost:8000/courses/${course}`, {
       method: 'DELETE',
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log(responseJson);
-        refreshList();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    });
+    retrieveCourses();
   };
 
   return (
@@ -74,17 +49,14 @@ const BasicTable = () => {
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Dessert (100g serving)</TableCell>
+              <TableCell>Cursos</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {courses &&
               courses.map((course) => (
                 <TableRow key={course.id}>
-                  <TableCell
-                    className="list-group-item actuve"
-                    //onClick={() => setActiveCourse(course, index)}
-                  >
+                  <TableCell className="list-group-item active">
                     {course.name}
                   </TableCell>
                 </TableRow>
@@ -96,4 +68,4 @@ const BasicTable = () => {
   );
 };
 
-export default BasicTable;
+export default CourseTable;
