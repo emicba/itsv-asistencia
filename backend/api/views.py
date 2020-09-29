@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from .models import Course, Student, Attendance, Parent, Allergy, Diet
+from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import CourseSerializer, StudentSerializer, AttendanceSerializer, ParentSerializer, AllergySerializer, DietSerializer
 
 
@@ -11,6 +12,8 @@ class CourseViewSet(viewsets.ModelViewSet):
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['course_id']
 
 
 class AttendanceViewSet(viewsets.ModelViewSet):
