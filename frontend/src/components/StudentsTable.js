@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MaterialTable from 'material-table';
-import { useParams } from 'react-router-dom';
 
-export default function StudentTable() {
-  const { id: courseId } = useParams();
+export default function StudentsTable() {
   const [student, setStudent] = useState([]);
   const [courses, setCourses] = useState([]);
 
@@ -35,9 +33,7 @@ export default function StudentTable() {
   }, []);
 
   const retrieveStudents = async () => {
-    const res = await fetch(
-      `http://localhost:8000/students/?course_id=${courseId}`,
-    );
+    const res = await fetch(`http://localhost:8000/students/`);
     const data1 = await res.json();
 
     setStudent(data1);

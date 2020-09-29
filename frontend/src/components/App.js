@@ -5,6 +5,8 @@ import Home from './Home';
 import Login from './Login';
 import CoursesTable from './CoursesTable';
 import CourseTable from './CourseTable';
+import StudentsTable from './StudentsTable';
+import StudentTable from './StudentTable';
 import Container from '@material-ui/core/Container';
 
 const routes = [
@@ -32,6 +34,18 @@ const routes = [
     exact: true,
     component: <CourseTable />,
   },
+  {
+    name: 'Students',
+    path: '/students',
+    exact: true,
+    component: <StudentsTable />,
+  },
+  {
+    name: 'Student',
+    path: '/student/:id',
+    exact: true,
+    component: <StudentTable />,
+  },
 ];
 
 function App() {
@@ -39,7 +53,9 @@ function App() {
     <div>
       <Router>
         <PersistentDrawerLeft
-          routes={routes.filter(x => !['Login', 'Course'].includes(x.name))}
+          routes={routes.filter(
+            x => !['Login', 'Course', 'Student'].includes(x.name),
+          )}
         />
         <Container>
           <Switch>
