@@ -1,20 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import MaterialTable from 'material-table';
 
-export default function MaterialTableDemo() {
+export default function StudentTable() {
+  const [student, setStudent] = useState([]);
+  const [courses, setCourses] = useState([]);
+
   const columns = [
     { title: 'Name', field: 'first_name' },
     { title: 'Surname', field: 'last_name' },
     { title: 'Dni', field: 'dni' },
     { title: 'Address', field: 'address' },
-    { title: 'Status', field: 'status' },
-    { title: 'Course', field: 'course_id' },
+    {
+      title: 'Status',
+      field: 'status',
+      lookup: {
+        1: 'CURSANDO',
+        2: 'EGRESADO',
+        3: 'SALIDO CON PASE',
+        4: 'SALIDO SIN PASE',
+      },
+    },
+    {
+      title: 'Course',
+      field: 'course_id',
+      type: 'numeric',
+    },
   ];
-
-  const [student, setStudent] = useState([]);
 
   useEffect(() => {
     retrieveStudents();
+    retrieveCourses();
   }, []);
 
   const retrieveStudents = async () => {
@@ -22,6 +37,13 @@ export default function MaterialTableDemo() {
     const data1 = await res.json();
 
     setStudent(data1);
+  };
+
+  const retrieveCourses = async () => {
+    const res = await fetch('http://localhost:8000/courses/');
+    const data = await res.json();
+
+    setCourses(data);
   };
 
   return (
@@ -32,23 +54,23 @@ export default function MaterialTableDemo() {
       editable={{
         onRowAdd: (newData) =>
           new Promise((resolve) => {
-            setTimeout(() => {
-              resolve();
-              setStudent((prevState) => {
-                const data = [...prevState];
-                data.push(newData);
-                return { ...prevState, data };
+            setTimeout(async () => {
+              const res = await fetch(`http://localhost:8000/students/`, {
+                method: 'POST',
+                body: JSON.stringify(newData),
+                headers: { 'Content-type': 'application/json; charset=UTF-8' },
               });
+              resolve();
             }, 600);
           }),
         onRowUpdate: (newData, oldData) =>
           new Promise((resolve) => {
-            setTimeout(() => {
+            setTimeout(async () => {
               if (oldData) {
-                const res = fetch(
-                  `http://localhost:8000/students/${oldData.id}`,
+                const res = await fetch(
+                  `http://localhost:8000/students/${newData.id}`,
                   {
-                    method: 'PATCH',
+                    method: 'PUT',
                     body: JSON.stringify({ newData }),
                   }
                 );
@@ -59,8 +81,8 @@ export default function MaterialTableDemo() {
           }),
         onRowDelete: (oldData) =>
           new Promise((resolve) => {
-            setTimeout(() => {
-              const res = fetch(
+            setTimeout(async () => {
+              const res = await fetch(
                 `http://localhost:8000/students/${oldData.id}`,
                 {
                   method: 'DELETE',
