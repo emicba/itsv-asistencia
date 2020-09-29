@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import "../assets/css/Layout.css";
+import React, { Component } from 'react';
+import '../assets/css/Layout.css';
 
-import PersistentDrawerLeft from "./Drawer";
-import MaterialTableDemo from "./Table";
+import PersistentDrawerLeft from './Drawer';
+import MaterialTableDemo from './Table';
 
 function Layout() {
   return (
