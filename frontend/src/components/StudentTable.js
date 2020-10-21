@@ -22,11 +22,6 @@ export default function StudentTable() {
         4: 'SALIDO SIN PASE',
       },
     },
-    {
-      title: 'Course',
-      field: 'course_id',
-      type: 'numeric',
-    },
   ];
 
   useEffect(() => {
@@ -61,40 +56,42 @@ export default function StudentTable() {
             setTimeout(async () => {
               const res = await fetch(`http://localhost:8000/students/`, {
                 method: 'POST',
-                body: JSON.stringify(newData),
-                headers: { 'Content-type': 'application/json; charset=UTF-8' },
+                headers: { 'Content-type': 'application/json' },
+                body: JSON.stringify({ ...newData, course_id: courseId }),
               });
+              retrieveStudents();
               resolve();
-            }, 600);
+            }, 0);
           }),
         onRowUpdate: (newData, oldData) =>
           new Promise(resolve => {
             setTimeout(async () => {
               if (oldData) {
                 const res = await fetch(
-                  `http://localhost:8000/students/${newData.id}`,
+                  `http://localhost:8000/students/${newData.id}/`,
                   {
                     method: 'PUT',
-                    body: JSON.stringify({ newData }),
+                    headers: { 'Content-type': 'application/json' },
+                    body: JSON.stringify(newData),
                   },
                 );
                 retrieveStudents();
                 resolve();
               }
-            }, 600);
+            }, 0);
           }),
         onRowDelete: oldData =>
           new Promise(resolve => {
             setTimeout(async () => {
               const res = await fetch(
-                `http://localhost:8000/students/${oldData.id}`,
+                `http://localhost:8000/students/${oldData.id}/`,
                 {
                   method: 'DELETE',
                 },
               );
               retrieveStudents();
               resolve();
-            }, 600);
+            }, 0);
           }),
       }}
     />

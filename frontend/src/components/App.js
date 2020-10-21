@@ -57,7 +57,7 @@ function App() {
             x => !['Login', 'Course', 'Student'].includes(x.name),
           )}
         />
-        <Container>
+        <Container style={{ marginTop: '5rem' }}>
           <Switch>
             {routes.map(route => (
               <Route
