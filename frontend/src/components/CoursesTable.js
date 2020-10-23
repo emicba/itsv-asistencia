@@ -57,7 +57,7 @@ const CourseTable = () => {
             {courses &&
               courses.map(course => (
                 <Link
-                  to={`/student/${course.id}`}
+                  to={`/student/${course.id}&${course.name}`}
                   style={{ display: 'table-row', textDecoration: 'none' }}
                 >
                   <TableCell className="list-group-item active">
