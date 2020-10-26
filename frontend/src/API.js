@@ -1,10 +1,10 @@
-const token = localStorage.getItem('itsv-asistencia-token');
-
-const headers = {
-  accept: 'application/json',
-  'content-type': 'application/json',
-  Authorization: `Token ${token}`,
-};
+const headers = () => ({
+  headers: {
+    accept: 'application/json',
+    'content-type': 'application/json',
+    Authorization: `Token ${localStorage.getItem('itsv-asistencia-token')}`,
+  },
+});
 
 export default {
   async login(username, password) {
@@ -27,7 +27,7 @@ export default {
   },
   async fetch(path) {
     const response = await fetch(`http://localhost:8000/${path}`, {
-      headers,
+      ...headers(),
     });
     const data = await response.json();
     if (response.ok) {
@@ -40,7 +40,7 @@ export default {
     async add(data) {
       const response = await fetch(`http://localhost:8000/students/`, {
         method: 'POST',
-        headers,
+        ...headers(),
         body: JSON.stringify(data),
       });
       if (response.ok) {
@@ -52,7 +52,7 @@ export default {
     async delete(id) {
       const response = await fetch(`http://localhost:8000/students/${id}`, {
         method: 'DELETE',
-        headers,
+        ...headers(),
       });
       if (response.ok) {
         return;
@@ -63,7 +63,7 @@ export default {
     async update(id, data) {
       const response = await fetch(`http://localhost:8000/students/${id}/`, {
         method: 'PUT',
-        headers,
+        ...headers(),
         body: JSON.stringify(data),
       });
       if (response.ok) {

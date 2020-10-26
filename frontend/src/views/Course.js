@@ -10,12 +10,12 @@ export default function Course() {
   const [course, setCourse] = useState(null);
 
   useEffect(() => {
-    fetchCourse();
-  }, []);
+    fetchCourse(courseId);
+  }, [courseId]);
 
-  const fetchCourse = async () => {
+  const fetchCourse = async id => {
     try {
-      const data = await API.fetch(`courses/${courseId}`);
+      const data = await API.fetch(`courses/${id}`);
       setCourse(data);
     } catch (error) {
       console.error(error);

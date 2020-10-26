@@ -53,7 +53,9 @@ export default function StudentsTable({ course }) {
                 try {
                   API.students.update(newData.id, newData);
                   setStudents(prevState => {
-                    return prevState;
+                    return prevState.map(student => {
+                      return student.id === newData.id ? newData : student;
+                    });
                   });
                 } catch (error) {
                   console.error(error);
