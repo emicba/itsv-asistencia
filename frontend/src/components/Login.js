@@ -1,17 +1,16 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { UserContext } from '../UserContext';
+import API from '../API';
+import { Chip } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -35,6 +34,30 @@ const useStyles = makeStyles(theme => ({
 
 export default function Login() {
   const classes = useStyles();
+  const [username, setUsername] = useState(undefined);
+  const [password, setPassword] = useState(undefined);
+  const [error, setError] = useState(null);
+
+  const [, setUser] = useContext(UserContext);
+  const history = useHistory();
+
+  const usernameHandler = e => {
+    setUsername(e.target.value);
+  };
+  const passwordHandler = e => {
+    setPassword(e.target.value);
+  };
+  const loginHandler = async e => {
+    e.preventDefault();
+    setError(null);
+    try {
+      const { token } = await API.login(username, password);
+      setUser({ token });
+      history.push('/');
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -46,19 +69,21 @@ export default function Login() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form onSubmit={loginHandler} className={classes.form} noValidate>
           <TextField
+            onChange={usernameHandler}
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            id="Username"
+            label="Username"
+            name="Username"
+            autoComplete="username"
             autoFocus
           />
           <TextField
+            onChange={passwordHandler}
             variant="outlined"
             margin="normal"
             required
@@ -79,6 +104,13 @@ export default function Login() {
             Sign In
           </Button>
         </form>
+        {!!error && (
+          <Chip
+            label={error}
+            color="secondary"
+            onDelete={() => setError(null)}
+          />
+        )}
       </div>
     </Container>
   );

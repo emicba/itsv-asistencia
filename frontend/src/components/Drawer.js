@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -19,6 +19,7 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
+import { UserContext } from '../UserContext';
 
 const drawerWidth = 240;
 
@@ -85,6 +86,7 @@ export default function PersistentDrawerLeft({ routes }) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [user, setUser] = useContext(UserContext);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -119,12 +121,22 @@ export default function PersistentDrawerLeft({ routes }) {
           </Typography>
 
           <Button color="inherit" className={classes.loginButton}>
-            <Link
-              to="/login"
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
-              Login
-            </Link>
+            {user ? (
+              <Link
+                to="/login"
+                style={{ textDecoration: 'none', color: 'inherit' }}
+                onClick={() => setUser(null)}
+              >
+                Logout
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                Login
+              </Link>
+            )}
           </Button>
         </Toolbar>
       </AppBar>

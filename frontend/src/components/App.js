@@ -8,6 +8,7 @@ import CourseTable from './CourseTable';
 import StudentsTable from './StudentsTable';
 import StudentTable from './StudentTable';
 import Container from '@material-ui/core/Container';
+import { UserProvider } from '../UserContext';
 
 const routes = [
   {
@@ -50,7 +51,7 @@ const routes = [
 
 function App() {
   return (
-    <div>
+    <UserProvider>
       <Router>
         <PersistentDrawerLeft
           routes={routes.filter(
@@ -70,7 +71,7 @@ function App() {
           </Switch>
         </Container>
       </Router>
-    </div>
+    </UserProvider>
   );
 }
 
