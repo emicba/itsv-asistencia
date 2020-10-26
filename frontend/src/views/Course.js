@@ -1,9 +1,10 @@
-import { Button, CircularProgress, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import API from '../API';
 import StudentsTable from '../components/StudentsTable';
 import AddIcon from '@material-ui/icons/Add';
+import Loading from '../components/Loading';
 
 export default function Course() {
   const { id: courseId } = useParams();
@@ -53,7 +54,7 @@ export default function Course() {
           <StudentsTable course={course} />
         </div>
       ) : (
-        <CircularProgress style={{ marginTop: '15rem' }} />
+        <Loading />
       )}
     </div>
   );

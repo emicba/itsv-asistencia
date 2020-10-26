@@ -5,7 +5,8 @@ import Home from './views/Home';
 import Login from './views/Login';
 import Courses from './views/Courses';
 import Course from './views/Course';
-import AttendanceForm from './components/AttendanceForm';
+import Subjects from './views/Subjects';
+import Attendance from './views/Attendance';
 import Container from '@material-ui/core/Container';
 import { UserProvider } from './UserContext';
 
@@ -36,9 +37,15 @@ const routes = [
   },
   {
     name: 'Attendance',
-    path: '/attendance',
+    path: '/attendance/:id',
     exact: true,
-    component: <AttendanceForm />,
+    component: <Attendance />,
+  },
+  {
+    name: 'Subjects',
+    path: '/subjects',
+    exact: true,
+    component: <Subjects />,
   },
 ];
 
