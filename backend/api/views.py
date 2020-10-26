@@ -1,9 +1,11 @@
 from datetime import datetime
 from django.http.response import JsonResponse
+from django.contrib.auth.models import User
 from rest_framework import viewsets
+from rest_framework.response import Response
 from .models import Course, Student, Attendance, Parent, Allergy, Diet, Subject
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import CourseSerializer, StudentSerializer, AttendanceSerializer, ParentSerializer, AllergySerializer, DietSerializer, SubjectSerializer
+from .serializers import CourseSerializer, StudentSerializer, AttendanceSerializer, ParentSerializer, AllergySerializer, DietSerializer, SubjectMinSerializer, SubjectSerializer
 from rest_framework.request import Request
 from django.utils.timezone import get_current_timezone
 
@@ -61,4 +63,19 @@ class DietViewSet(viewsets.ModelViewSet):
 
 class SubjectViewSet(viewsets.ModelViewSet):
     queryset = Subject.objects.all()
-    serializer_class = SubjectSerializer
+    serializer_class = SubjectMinSerializer
+
+    def list(self, request: Request, *args, **kwargs):
+        user: User = request.user
+        if user.is_superuser:
+            subjects = Subject.objects.all()
+        else:
+            subjects = Subject.objects.filter(teachers=user)
+
+        serializer = SubjectMinSerializer(subjects, many=True, read_only=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request: Request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = SubjectSerializer(instance)
+        return Response(serializer.data)

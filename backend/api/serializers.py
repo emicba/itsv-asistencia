@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Course, Student, Attendance, Parent, Allergy, Diet, Subject
 
@@ -18,6 +19,12 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ('id', 'name', 'students')
+
+
+class CourseMinSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ('id', 'name')
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
@@ -44,7 +51,32 @@ class DietSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name')
+
+
+class SubjectMinSerializer(serializers.ModelSerializer):
+    teachers = serializers.SerializerMethodField()
+    course = CourseMinSerializer()
+
+    def get_teachers(self, obj):
+        teachers = obj.teachers.all()
+        return UserSerializer(teachers, many=True, read_only=True).data
+
+    class Meta:
+        model = Subject
+        fields = '__all__'
+
 class SubjectSerializer(serializers.ModelSerializer):
+    teachers = serializers.SerializerMethodField()
+    course = CourseSerializer()
+
+    def get_teachers(self, obj):
+        teachers = obj.teachers.all()
+        return UserSerializer(teachers, many=True, read_only=True).data
+
     class Meta:
         model = Subject
         fields = '__all__'
