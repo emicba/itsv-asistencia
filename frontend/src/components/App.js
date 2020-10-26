@@ -7,6 +7,7 @@ import CoursesTable from './CoursesTable';
 import CourseTable from './CourseTable';
 import StudentsTable from './StudentsTable';
 import StudentTable from './StudentTable';
+import AttendanceForm from './AttendanceForm';
 import Container from '@material-ui/core/Container';
 import { UserProvider } from '../UserContext';
 
@@ -43,9 +44,15 @@ const routes = [
   },
   {
     name: 'Student',
-    path: '/student/:id',
+    path: '/student/:id&:name',
     exact: true,
     component: <StudentTable />,
+  },
+  {
+    name: 'Attendance',
+    path: '/attendance',
+    exact: true,
+    component: <AttendanceForm />,
   },
 ];
 
@@ -55,7 +62,7 @@ function App() {
       <Router>
         <PersistentDrawerLeft
           routes={routes.filter(
-            x => !['Login', 'Course', 'Student'].includes(x.name),
+            x => !['Login', 'Course', 'Student', 'Attendance'].includes(x.name),
           )}
         />
         <Container style={{ marginTop: '5rem' }}>
