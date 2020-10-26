@@ -22,7 +22,7 @@ class Student(models.Model):
     last_name = models.CharField(max_length=100)
     dni = models.CharField(max_length=8, unique=True)
     address = models.TextField()
-    course_id = models.ForeignKey(Course, on_delete=models.DO_NOTHING)
+    course = models.ForeignKey(Course, on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     status = models.IntegerField(choices=STUDENT_STATUS_CHOICES)

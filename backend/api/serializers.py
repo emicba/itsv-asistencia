@@ -2,16 +2,22 @@ from rest_framework import serializers
 from .models import Course, Student, Attendance, Parent, Allergy, Diet, Subject
 
 
-class CourseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Course
-        fields = '__all__'
-
-
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = '__all__'
+        fields = ('id', 'first_name', 'last_name', 'dni', 'address', 'status', 'course')
+
+
+class CourseSerializer(serializers.ModelSerializer):
+    students = serializers.SerializerMethodField()
+
+    def get_students(self, obj):
+        students = Student.objects.filter(course=obj)
+        return StudentSerializer(students, many=True, read_only=True).data
+
+    class Meta:
+        model = Course
+        fields = ('id', 'name', 'students')
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
