@@ -7,7 +7,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import API from '../API';
 
 const useStyles = makeStyles({
   table: {
@@ -19,29 +20,24 @@ const CourseTable = () => {
   const classes = useStyles();
 
   const [courses, setCourses] = useState([]);
-  const [searchName, setSearchName] = useState('');
+
+  const history = useHistory();
 
   useEffect(() => {
-    retrieveCourses();
+    fetchCourses();
   }, []);
 
-  const onChangeSearchName = e => {
-    const searchName = e.target.value;
-    setSearchName(searchName);
+  const fetchCourses = async () => {
+    try {
+      const data = await API.fetch('courses/');
+      setCourses(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const retrieveCourses = async () => {
-    const res = await fetch('http://localhost:8000/courses/');
-    const data = await res.json();
-
-    setCourses(data);
-  };
-
-  const removeCourses = course => {
-    const res = fetch(`http://localhost:8000/courses/${course}`, {
-      method: 'DELETE',
-    });
-    retrieveCourses();
+  const handleCourseClick = id => {
+    history.push(`/course/${id}`);
   };
 
   return (
@@ -54,16 +50,15 @@ const CourseTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {courses &&
+            {!!courses &&
               courses.map(course => (
-                <Link
-                  to={`/student/${course.id}&${course.name}`}
-                  style={{ display: 'table-row', textDecoration: 'none' }}
+                <TableRow
+                  key={course.id}
+                  onClick={() => handleCourseClick(course.id)}
+                  style={{ cursor: 'pointer' }}
                 >
-                  <TableCell className="list-group-item active">
-                    {course.name}
-                  </TableCell>
-                </Link>
+                  <TableCell>{course.name}</TableCell>
+                </TableRow>
               ))}
           </TableBody>
         </Table>

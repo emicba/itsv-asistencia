@@ -1,15 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import PersistentDrawerLeft from './Drawer';
-import Home from './Home';
-import Login from './Login';
-import CoursesTable from './CoursesTable';
-import CourseTable from './CourseTable';
-import StudentsTable from './StudentsTable';
-import StudentTable from './StudentTable';
-import AttendanceForm from './AttendanceForm';
+import PersistentDrawerLeft from './components/Drawer';
+import Home from './views/Home';
+import Login from './views/Login';
+import Courses from './views/Courses';
+import Course from './views/Course';
+import AttendanceForm from './components/AttendanceForm';
 import Container from '@material-ui/core/Container';
-import { UserProvider } from '../UserContext';
+import { UserProvider } from './UserContext';
 
 const routes = [
   {
@@ -28,25 +26,13 @@ const routes = [
     name: 'Courses',
     path: '/courses',
     exact: true,
-    component: <CoursesTable />,
+    component: <Courses />,
   },
   {
     name: 'Course',
     path: '/course/:id',
     exact: true,
-    component: <CourseTable />,
-  },
-  {
-    name: 'Students',
-    path: '/students',
-    exact: true,
-    component: <StudentsTable />,
-  },
-  {
-    name: 'Student',
-    path: '/student/:id&:name',
-    exact: true,
-    component: <StudentTable />,
+    component: <Course />,
   },
   {
     name: 'Attendance',

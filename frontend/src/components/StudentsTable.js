@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import MaterialTable from 'material-table';
+import API from '../API';
 
-export default function StudentsTable() {
-  const [student, setStudent] = useState([]);
-  const [courses, setCourses] = useState([]);
+export default function StudentsTable({ course }) {
+  const [students, setStudents] = useState([]);
+
+  useEffect(() => {
+    setStudents(course.students);
+  }, [course]);
 
   const columns = [
     { title: 'Name', field: 'first_name' },
@@ -20,77 +24,58 @@ export default function StudentsTable() {
         4: 'SALIDO SIN PASE',
       },
     },
-    {
-      title: 'Course',
-      field: 'course_id',
-      type: 'numeric',
-    },
   ];
-
-  useEffect(() => {
-    retrieveStudents();
-    retrieveCourses();
-  }, []);
-
-  const retrieveStudents = async () => {
-    const res = await fetch(`http://localhost:8000/students/`);
-    const data1 = await res.json();
-
-    setStudent(data1);
-  };
-
-  const retrieveCourses = async () => {
-    const res = await fetch('http://localhost:8000/courses/');
-    const data = await res.json();
-
-    setCourses(data);
-  };
 
   return (
     <MaterialTable
       title="Estudiantes"
       columns={columns}
-      data={student}
+      data={students}
       editable={{
-        onRowAdd: newData =>
-          new Promise(resolve => {
+        onRowAdd: newData => {
+          const newStudent = { ...newData, course: course.id };
+          return new Promise(resolve => {
             setTimeout(async () => {
-              const res = await fetch(`http://localhost:8000/students/`, {
-                method: 'POST',
-                body: JSON.stringify(newData),
-                headers: { 'Content-type': 'application/json; charset=UTF-8' },
-              });
+              try {
+                API.students.add(newStudent);
+                setStudents(prevState => [...prevState, newStudent]);
+              } catch (error) {
+                console.error(error);
+              }
               resolve();
-            }, 600);
-          }),
-        onRowUpdate: (newData, oldData) =>
-          new Promise(resolve => {
+            }, 0);
+          });
+        },
+        onRowUpdate: (newData, oldData) => {
+          return new Promise(resolve => {
             setTimeout(async () => {
               if (oldData) {
-                const res = await fetch(
-                  `http://localhost:8000/students/${newData.id}`,
-                  {
-                    method: 'PUT',
-                    body: JSON.stringify({ newData }),
-                  },
-                );
-                retrieveStudents();
+                try {
+                  API.students.update(newData.id, newData);
+                  setStudents(prevState => {
+                    return prevState;
+                  });
+                } catch (error) {
+                  console.error(error);
+                }
                 resolve();
               }
-            }, 600);
-          }),
+            }, 0);
+          });
+        },
         onRowDelete: oldData =>
           new Promise(resolve => {
             setTimeout(async () => {
-              const res = await fetch(
-                `http://localhost:8000/students/${oldData.id}`,
-                {
-                  method: 'DELETE',
-                },
-              );
-              retrieveStudents();
+              try {
+                API.students.delete(oldData.id);
+                setStudents(prevState =>
+                  prevState.filter(student => student.id !== oldData.id),
+                );
+              } catch (error) {
+                console.error(error);
+              }
               resolve();
-            }, 600);
+            }, 0);
           }),
       }}
     />

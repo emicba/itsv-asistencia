@@ -1,9 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Card from './Card';
+import Card from '../components/Card';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
 import AccessibilityNewOutlinedIcon from '@material-ui/icons/AccessibilityNewOutlined';
 import ClassOutlinedIcon from '@material-ui/icons/ClassOutlined';
 import SubjectOutlinedIcon from '@material-ui/icons/SubjectOutlined';

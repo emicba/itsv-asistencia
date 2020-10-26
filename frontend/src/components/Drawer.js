@@ -125,7 +125,10 @@ export default function PersistentDrawerLeft({ routes }) {
               <Link
                 to="/login"
                 style={{ textDecoration: 'none', color: 'inherit' }}
-                onClick={() => setUser(null)}
+                onClick={() => {
+                  setUser(null);
+                  localStorage.removeItem('itsv-asistencia-token');
+                }}
               >
                 Logout
               </Link>
