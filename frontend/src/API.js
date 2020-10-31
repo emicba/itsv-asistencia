@@ -73,4 +73,18 @@ export default {
       throw error;
     },
   },
+  attendace: {
+    async post(data) {
+      const response = await fetch(`http://localhost:8000/attendances/`, {
+        method: 'POST',
+        ...headers(),
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        return;
+      }
+      const error = new Error('Unable to take attendance.');
+      throw error;
+    },
+  },
 };
