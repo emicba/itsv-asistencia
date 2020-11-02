@@ -69,13 +69,19 @@ class SubjectMinSerializer(serializers.ModelSerializer):
         model = Subject
         fields = '__all__'
 
+
 class SubjectSerializer(serializers.ModelSerializer):
     teachers = serializers.SerializerMethodField()
     course = CourseSerializer()
+    meets = serializers.SerializerMethodField()
 
     def get_teachers(self, obj):
         teachers = obj.teachers.all()
         return UserSerializer(teachers, many=True, read_only=True).data
+
+    def get_meets(self, obj):
+        meets = Attendance.objects.filter(subject=obj).values('start_date').distinct()
+        return meets.order_by('-start_date')
 
     class Meta:
         model = Subject

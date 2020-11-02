@@ -26,7 +26,6 @@ class AttendanceViewSet(viewsets.ModelViewSet):
     serializer_class = AttendanceSerializer
 
     def create(self, request: Request, *args, **kwargs):
-        print(request.data)
         try:
             subject_instance = Subject.objects.get(id=request.data['subject'])
             start_date = request.data['start_date']
@@ -45,6 +44,19 @@ class AttendanceViewSet(viewsets.ModelViewSet):
             return JsonResponse({'message': 'ok'})
         except AttributeError as ERROR:
             return JsonResponse({'message': str(ERROR)}, status=500)
+
+    def get_queryset(self):
+        subject = self.request.query_params.get('subject', None)
+        start_date = self.request.query_params.get('start_date', None)
+        if subject and start_date:
+            subject_obj = Subject.objects.get(id=subject)
+            qs = Attendance.objects.filter(
+                subject=subject_obj,
+                start_date=start_date
+            )
+        else:
+            qs = Attendance.objects.none()
+        return qs
 
 
 class ParentViewSet(viewsets.ModelViewSet):
