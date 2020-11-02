@@ -19,7 +19,7 @@ export default function SubjectItem({ courseName, subjects }) {
   };
 
   const handleSubjectClick = id => {
-    history.push(`/attendance/${id}`);
+    history.push(`/subject/${id}`);
   };
 
   return checked ? (

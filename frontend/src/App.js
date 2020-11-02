@@ -9,6 +9,7 @@ import Subjects from './views/Subjects';
 import Attendance from './views/Attendance';
 import Container from '@material-ui/core/Container';
 import { UserProvider } from './UserContext';
+import Subject from './views/Subject';
 
 const routes = [
   {
@@ -47,6 +48,12 @@ const routes = [
     exact: true,
     component: <Subjects />,
   },
+  {
+    name: 'Subject',
+    path: '/subject/:id',
+    exact: true,
+    component: <Subject />,
+  },
 ];
 
 function App() {
@@ -54,8 +61,8 @@ function App() {
     <UserProvider>
       <Router>
         <PersistentDrawerLeft
-          routes={routes.filter(
-            x => !['Login', 'Course', 'Student', 'Attendance'].includes(x.name),
+          routes={routes.filter(x =>
+            ['Home', 'Courses', 'Subjects'].includes(x.name),
           )}
         />
         <Container style={{ marginTop: '5rem' }}>

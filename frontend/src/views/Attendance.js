@@ -64,7 +64,7 @@ const Attendance = () => {
     try {
       await API.attendace.post({
         subject: subjectId,
-        start_date: +startTime / 1000,
+        start_date: Math.floor(+startTime / 1000),
         students: attendance,
         justified: justified,
       });

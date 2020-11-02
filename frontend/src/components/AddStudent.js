@@ -7,7 +7,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   formControl: {
     marginTop: theme.spacing(10),
     marginLeft: theme.spacing(10),
@@ -42,7 +42,7 @@ const AddStudent = () => {
   const [student, setStudent] = useState(initialStudentState);
   const [courses, setCourses] = useState([]);
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     const { name, value } = event.target;
     setStudent({ ...student, [name]: value });
   };
@@ -148,7 +148,7 @@ const AddStudent = () => {
           name="course_id"
         >
           {courses &&
-            courses.map((course) => (
+            courses.map(course => (
               <MenuItem key={course.id} value={course.id}>
                 {course.name}
               </MenuItem>
