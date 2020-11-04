@@ -10,6 +10,7 @@ import Attendance from './views/Attendance';
 import Container from '@material-ui/core/Container';
 import { UserProvider } from './UserContext';
 import Subject from './views/Subject';
+import Meet from './views/Meet';
 
 const routes = [
   {
@@ -53,6 +54,12 @@ const routes = [
     path: '/subject/:id',
     exact: true,
     component: <Subject />,
+  },
+  {
+    name: 'Meet',
+    path: '/meet/:id/:start_date',
+    exact: true,
+    component: <Meet />,
   },
 ];
 
