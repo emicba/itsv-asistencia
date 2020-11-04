@@ -8,6 +8,7 @@ import 'date-fns';
 import { MuiPickersUtilsProvider, DateTimePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import DoneIcon from '@material-ui/icons/Done';
+import { useHistory } from 'react-router-dom';
 
 const Attendance = () => {
   const { id: subjectId } = useParams();
@@ -15,6 +16,7 @@ const Attendance = () => {
   const [attendance, setAttendace] = useState({});
   const [justified, setJustified] = useState({});
   const [startTime, setStartTime] = React.useState(new Date());
+  const history = useHistory();
 
   const toggleAttendance = id => {
     setAttendace(prevState => {
@@ -68,6 +70,7 @@ const Attendance = () => {
         students: attendance,
         justified: justified,
       });
+      history.push(`/subject/${subjectId}`);
     } catch (error) {
       console.error(error);
     }
