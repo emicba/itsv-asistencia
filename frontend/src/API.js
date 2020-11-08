@@ -100,5 +100,27 @@ export default {
       const error = new Error('Unable to add subject.');
       throw error;
     },
+    async addTeacher(subjectId, username) {
+      const response = await fetch(
+        `http://localhost:8000/subjects/${subjectId}/`,
+        {
+          method: 'PATCH',
+          ...headers(),
+          body: JSON.stringify({
+            op: 'add',
+            path: 'teachers',
+            value: {
+              username,
+            },
+          }),
+        },
+      );
+      const data = await response.json();
+      if (response.ok) {
+        return;
+      }
+      const error = new Error(data.message || 'Unable to add teacher.');
+      throw error;
+    },
   },
 };

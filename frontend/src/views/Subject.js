@@ -1,13 +1,16 @@
 import {
   Button,
   Grid,
+  IconButton,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   ListSubheader,
   makeStyles,
+  MenuItem,
   Paper,
+  Select,
   Typography,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
@@ -16,8 +19,10 @@ import API from '../API';
 import Loading from '../components/Loading';
 import AddIcon from '@material-ui/icons/Add';
 import EventNoteIcon from '@material-ui/icons/EventNote';
-import { format } from 'date-fns';
 import { formatDate } from '../utils';
+import CheckIcon from '@material-ui/icons/Check';
+import CloseIcon from '@material-ui/icons/Close';
+import { xorBy } from 'lodash';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,6 +47,9 @@ const Subject = () => {
   const [subject, setSubject] = useState(null);
   const classes = useStyles();
   const history = useHistory();
+  const [addState, setAddState] = useState(false);
+  const [teachersToAdd, setTeachersToAdd] = useState([]);
+  const [selectedTeacher, setSelectedTeacher] = useState('');
 
   useEffect(() => {
     fetchData(subjectId);
@@ -60,13 +68,46 @@ const Subject = () => {
     history.push(`/meet/${subjectId}/${start_date}`);
   };
 
+  const addStateHandler = async () => {
+    try {
+      const data = await API.fetch('teachers/');
+      setTeachersToAdd(xorBy(subject.teachers, data, 'username'));
+      setAddState(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleChange = e => {
+    setSelectedTeacher(e.target.value);
+  };
+
+  const addTeacherHandler = async () => {
+    try {
+      await API.subjects.addTeacher(subjectId, selectedTeacher);
+      setAddState(false);
+      setSubject(prevState => {
+        return {
+          ...prevState,
+          teachers: [
+            ...prevState.teachers,
+            teachersToAdd.find(x => x.username === selectedTeacher),
+          ],
+        };
+      });
+      setSelectedTeacher('');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className={classes.container}>
       {subject ? (
         <div className={classes.root}>
           <Paper className={classes.header}>
             <Grid container justify="space-between">
-              <Grid item xs={12} sm={8}>
+              <Grid item xs={12} sm={9}>
                 <Typography variant="h5">
                   {subject.name} - {subject.course.name}
                 </Typography>
@@ -74,9 +115,38 @@ const Subject = () => {
                   {subject.teachers
                     .map(x => `${x.first_name} ${x.last_name}`)
                     .join(', ')}
+                  {addState ? (
+                    <div>
+                      <Select
+                        value={selectedTeacher}
+                        onChange={handleChange}
+                        autoWidth
+                      >
+                        {teachersToAdd.map(x => (
+                          <MenuItem key={x.username} value={x.username}>
+                            {x.first_name} {x.last_name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      <IconButton onClick={addTeacherHandler}>
+                        <CheckIcon />
+                      </IconButton>
+                      <IconButton onClick={() => setAddState(false)}>
+                        <CloseIcon />
+                      </IconButton>
+                    </div>
+                  ) : (
+                    <IconButton
+                      onClick={addStateHandler}
+                      edge="end"
+                      aria-label="add"
+                    >
+                      <AddIcon />
+                    </IconButton>
+                  )}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={4} style={{ display: 'flex' }}>
+              <Grid item xs={12} sm={3}>
                 <Link to={`/attendance/${subjectId}`}>
                   <Button
                     variant="contained"
