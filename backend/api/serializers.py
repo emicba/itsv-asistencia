@@ -8,6 +8,11 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = ('id', 'first_name', 'last_name', 'dni', 'address', 'status', 'course')
 
+class StudentMinSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ('id', 'first_name', 'last_name')
+
 
 class CourseSerializer(serializers.ModelSerializer):
     students = serializers.SerializerMethodField()
@@ -28,9 +33,11 @@ class CourseMinSerializer(serializers.ModelSerializer):
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
+    student = StudentMinSerializer()
+
     class Meta:
         model = Attendance
-        fields = '__all__'
+        fields = ('id', 'start_date', 'attended', 'justified', 'student', 'subject')
 
 
 class ParentSerializer(serializers.ModelSerializer):
