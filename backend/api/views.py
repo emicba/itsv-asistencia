@@ -3,11 +3,14 @@ from django.http.response import JsonResponse
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.serializers import Serializer
 from .models import Course, Student, Attendance, Parent, Allergy, Diet, Subject
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import CourseSerializer, StudentSerializer, AttendanceSerializer, ParentSerializer, AllergySerializer, DietSerializer, SubjectMinSerializer, SubjectSerializer
 from rest_framework.request import Request
 from django.utils.timezone import get_current_timezone
+from rest_framework import status
+
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -41,9 +44,9 @@ class AttendanceViewSet(viewsets.ModelViewSet):
                     justified=justified
                 )
 
-            return JsonResponse({'message': 'ok'})
+            return JsonResponse({'message': 'ok'}, status=status.HTTP_200_OK)
         except AttributeError as ERROR:
-            return JsonResponse({'message': str(ERROR)}, status=500)
+            return JsonResponse({'message': str(ERROR)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def get_queryset(self):
         subject = self.request.query_params.get('subject', None)
@@ -53,7 +56,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
             qs = Attendance.objects.filter(
                 subject=subject_obj,
                 start_date=start_date
-            )
+            ).order_by('student__last_name', 'student__first_name')
         else:
             qs = Attendance.objects.none()
         return qs
@@ -73,6 +76,7 @@ class DietViewSet(viewsets.ModelViewSet):
     queryset = Diet.objects.all()
     serializer_class = DietSerializer
 
+
 class SubjectViewSet(viewsets.ModelViewSet):
     queryset = Subject.objects.all()
     serializer_class = SubjectMinSerializer
@@ -85,9 +89,23 @@ class SubjectViewSet(viewsets.ModelViewSet):
             subjects = Subject.objects.filter(teachers=user)
 
         serializer = SubjectMinSerializer(subjects, many=True, read_only=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request: Request, *args, **kwargs):
         instance = self.get_object()
         serializer = SubjectSerializer(instance)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request: Request, *args, **kwargs):
+        name = request.data.get('name')
+        course = request.data.get('course')
+        if name and course:
+            try:
+                course_instance = Course.objects.get(name=course)
+                instance = Subject.objects.create(course=course_instance, name=name)
+                serializer = SubjectMinSerializer(instance)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except Course.DoesNotExist:
+                return Response({'message': 'Invalid course.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response({'message': 'Name and course must be provided.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
