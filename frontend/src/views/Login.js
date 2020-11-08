@@ -9,8 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { UserContext } from '../UserContext';
 import API from '../API';
-import { Chip } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
+import { Chip, Paper } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -18,6 +17,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    padding: '2rem 3rem',
   },
   avatar: {
     margin: theme.spacing(1),
@@ -39,7 +39,6 @@ export default function Login() {
   const [error, setError] = useState(null);
 
   const [, setUser] = useContext(UserContext);
-  const history = useHistory();
 
   const usernameHandler = e => {
     setUsername(e.target.value);
@@ -54,7 +53,6 @@ export default function Login() {
       const { token } = await API.login(username, password);
       setUser({ token });
       localStorage.setItem('itsv-asistencia-token', token);
-      history.push('/');
     } catch (error) {
       setError(error.message);
     }
@@ -63,7 +61,11 @@ export default function Login() {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <div className={classes.paper} style={{ marginTop: '5rem' }}>
+      <Paper
+        className={classes.paper}
+        style={{ marginTop: '5rem' }}
+        elevation={2}
+      >
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
@@ -112,7 +114,7 @@ export default function Login() {
             onDelete={() => setError(null)}
           />
         )}
-      </div>
+      </Paper>
     </Container>
   );
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import PersistentDrawerLeft from './components/Drawer';
 import Home from './views/Home';
@@ -8,7 +8,7 @@ import Course from './views/Course';
 import Subjects from './views/Subjects';
 import Attendance from './views/Attendance';
 import Container from '@material-ui/core/Container';
-import { UserProvider } from './UserContext';
+import { UserContext } from './UserContext';
 import Subject from './views/Subject';
 import Meet from './views/Meet';
 
@@ -18,12 +18,6 @@ const routes = [
     path: '/',
     exact: true,
     component: <Home />,
-  },
-  {
-    name: 'Login',
-    path: '/login',
-    exact: true,
-    component: <Login />,
   },
   {
     name: 'Courses',
@@ -64,28 +58,34 @@ const routes = [
 ];
 
 function App() {
+  const [user] = useContext(UserContext);
+
   return (
-    <UserProvider>
-      <Router>
-        <PersistentDrawerLeft
-          routes={routes.filter(x =>
-            ['Home', 'Courses', 'Subjects'].includes(x.name),
-          )}
-        />
-        <Container style={{ marginTop: '5rem' }}>
-          <Switch>
-            {routes.map(route => (
-              <Route
-                key={route.name}
-                path={route.path}
-                exact={route.exact}
-                render={() => route.component}
-              />
-            ))}
-          </Switch>
-        </Container>
-      </Router>
-    </UserProvider>
+    <div>
+      {!!user ? (
+        <Router>
+          <PersistentDrawerLeft
+            routes={routes.filter(x =>
+              ['Home', 'Courses', 'Subjects'].includes(x.name),
+            )}
+          />
+          <Container style={{ marginTop: '5rem' }}>
+            <Switch>
+              {routes.map(route => (
+                <Route
+                  key={route.name}
+                  path={route.path}
+                  exact={route.exact}
+                  render={() => route.component}
+                />
+              ))}
+            </Switch>
+          </Container>
+        </Router>
+      ) : (
+        <Login />
+      )}
+    </div>
   );
 }
 

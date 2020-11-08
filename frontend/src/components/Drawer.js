@@ -86,7 +86,7 @@ export default function PersistentDrawerLeft({ routes }) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [user, setUser] = useContext(UserContext);
+  const [, setUser] = useContext(UserContext);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -121,25 +121,16 @@ export default function PersistentDrawerLeft({ routes }) {
           </Typography>
 
           <Button color="inherit" className={classes.loginButton}>
-            {user ? (
-              <Link
-                to="/login"
-                style={{ textDecoration: 'none', color: 'inherit' }}
-                onClick={() => {
-                  setUser(null);
-                  localStorage.removeItem('itsv-asistencia-token');
-                }}
-              >
-                Logout
-              </Link>
-            ) : (
-              <Link
-                to="/login"
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
-                Login
-              </Link>
-            )}
+            <Link
+              to="/"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+              onClick={() => {
+                setUser(null);
+                localStorage.removeItem('itsv-asistencia-token');
+              }}
+            >
+              Logout
+            </Link>
           </Button>
         </Toolbar>
       </AppBar>
