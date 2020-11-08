@@ -3,13 +3,14 @@ from django.http.response import JsonResponse
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.serializers import Serializer
+from rest_framework.viewsets import GenericViewSet
 from .models import Course, Student, Attendance, Parent, Allergy, Diet, Subject
 from django_filters.rest_framework import DjangoFilterBackend
-from .serializers import CourseSerializer, StudentSerializer, AttendanceSerializer, ParentSerializer, AllergySerializer, DietSerializer, SubjectMinSerializer, SubjectSerializer
+from .serializers import CourseSerializer, StudentSerializer, AttendanceSerializer, ParentSerializer, AllergySerializer, DietSerializer, SubjectMinSerializer, SubjectSerializer, UserSerializer
 from rest_framework.request import Request
 from django.utils.timezone import get_current_timezone
 from rest_framework import status
+from rest_framework import mixins
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -109,3 +110,24 @@ class SubjectViewSet(viewsets.ModelViewSet):
                 return Response({'message': 'Invalid course.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response({'message': 'Name and course must be provided.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def partial_update(self, request, *args, **kwargs):
+        operation = request.data.get('op')
+        path = request.data.get('path')
+        value = request.data.get('value')
+        if (operation == 'add' and path == 'teachers' and value.get('username')):
+            try:
+                user: User = User.objects.get(username=value.get('username'))
+            except User.DoesNotExist:
+                return Response({'message': 'User doesn\'t exist'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            instance: Subject = self.get_object()
+            instance.teachers.add(user)
+            return Response({'message': 'ok'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Operation not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class TeacherViewSet(mixins.ListModelMixin,
+                     GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
