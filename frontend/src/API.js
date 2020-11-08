@@ -87,4 +87,18 @@ export default {
       throw error;
     },
   },
+  subjects: {
+    async create(data) {
+      const response = await fetch(`http://localhost:8000/subjects/`, {
+        method: 'POST',
+        ...headers(),
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+      const error = new Error('Unable to add subject.');
+      throw error;
+    },
+  },
 };
