@@ -1,14 +1,10 @@
-import { Button, Grid, Typography, makeStyles, Paper } from '@material-ui/core';
+import { Grid, Typography, makeStyles, Paper } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import API from '../API';
 import Loading from '../components/Loading';
-import 'date-fns';
-import { MuiPickersUtilsProvider, DateTimePicker } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import UpdateIcon from '@material-ui/icons/Update';
-import { useHistory } from 'react-router-dom';
+import MeetTable from '../components/MeetTable';
+import { formatDate } from '../utils';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,15 +25,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Meet = () => {
-  const { id: subjectId, start_date } = useParams();
+  const { id: subjectId, start_date: startDate } = useParams();
   const [subject, setSubject] = useState(null);
-  const [startTime, setStartTime] = React.useState(start_date);
+  const [attendance, setAttendance] = useState(null);
   const classes = useStyles();
-  const history = useHistory();
 
   useEffect(() => {
     fetchCourse(subjectId);
-  }, [subjectId]);
+    fetchAttendance(subjectId, startDate);
+  }, [subjectId, startDate]);
 
   const fetchCourse = async id => {
     try {
@@ -48,22 +44,20 @@ const Meet = () => {
     }
   };
 
-  const handleDateChange = date => {
-    setStartTime(date);
-  };
-
-  const goBack = async () => {
-    history.push(`/subject/${subjectId}`);
-  };
-
-  const updateAttendance = async () => {
-    // update function
-    history.push(`/subject/${subjectId}`);
+  const fetchAttendance = async (id, date) => {
+    try {
+      const data = await API.fetch(
+        `attendances?subject=${id}&start_date=${date}`,
+      );
+      setAttendance(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <div className={classes.container}>
-      {subject ? (
+      {subject && attendance ? (
         <div className={classes.root}>
           <Paper className={classes.header}>
             <Grid
@@ -72,7 +66,7 @@ const Meet = () => {
               justify="space-between"
               alignItems="center"
             >
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={9}>
                 <Typography variant="h5">
                   {subject.name} - {subject.course.name}
                 </Typography>
@@ -82,36 +76,17 @@ const Meet = () => {
                     .join(', ')}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={6} style={{ display: 'flex' }}>
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  <DateTimePicker
-                    label="Select date and time"
-                    inputVariant="outlined"
-                    value={startTime}
-                    onChange={handleDateChange}
-                  />
-                </MuiPickersUtilsProvider>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  style={{ margin: '1rem', float: 'right' }}
-                  startIcon={<ArrowBackIcon />}
-                  onClick={goBack}
+              <Grid item xs={12} sm={3}>
+                <Typography
+                  variant="h6"
+                  style={{ textTransform: 'capitalize' }}
                 >
-                  Go back
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  style={{ margin: '1rem', float: 'right' }}
-                  startIcon={<UpdateIcon />}
-                  onClick={updateAttendance}
-                >
-                  Update
-                </Button>
+                  {formatDate(Date.parse(startDate))}
+                </Typography>
               </Grid>
             </Grid>
           </Paper>
+          <MeetTable attendance={attendance} />
         </div>
       ) : (
         <Loading />

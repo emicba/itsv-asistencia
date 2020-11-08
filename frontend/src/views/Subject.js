@@ -17,6 +17,7 @@ import Loading from '../components/Loading';
 import AddIcon from '@material-ui/icons/Add';
 import EventNoteIcon from '@material-ui/icons/EventNote';
 import { format } from 'date-fns';
+import { formatDate } from '../utils';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -105,8 +106,8 @@ const Subject = () => {
                 <ListItemIcon>
                   <EventNoteIcon />
                 </ListItemIcon>
-                <ListItemText>
-                  {format(Date.parse(x.start_date), 'MMMM dd, yyyy HH:mm')}
+                <ListItemText style={{ textTransform: 'capitalize' }}>
+                  {formatDate(Date.parse(x.start_date))}
                 </ListItemText>
               </ListItem>
             ))}
