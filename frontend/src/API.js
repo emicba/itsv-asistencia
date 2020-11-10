@@ -122,6 +122,28 @@ export default {
       const error = new Error(data.message || 'Unable to add teacher.');
       throw error;
     },
+    async removeTeacher(subjectId, username) {
+      const response = await fetch(
+        `http://localhost:8000/subjects/${subjectId}/`,
+        {
+          method: 'PATCH',
+          ...headers(),
+          body: JSON.stringify({
+            op: 'remove',
+            path: 'teachers',
+            value: {
+              username,
+            },
+          }),
+        },
+      );
+      const data = await response.json();
+      if (response.ok) {
+        return;
+      }
+      const error = new Error(data.message || 'Unable to remove teacher.');
+      throw error;
+    },
     async delete(id) {
       const response = await fetch(`http://localhost:8000/subjects/${id}`, {
         method: 'DELETE',

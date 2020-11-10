@@ -1,5 +1,6 @@
 import {
   Button,
+  Chip,
   Grid,
   IconButton,
   List,
@@ -39,6 +40,9 @@ const useStyles = makeStyles(theme => ({
   header: {
     width: '100%',
     padding: '1rem',
+  },
+  chip: {
+    margin: '0 .3rem',
   },
 }));
 
@@ -101,6 +105,22 @@ const Subject = () => {
     }
   };
 
+  const removeTeacherHandler = async username => {
+    try {
+      await API.subjects.removeTeacher(subjectId, username);
+      setSubject(prevState => {
+        return {
+          ...prevState,
+          teachers: [
+            ...prevState.teachers.filter(x => x.username !== username),
+          ],
+        };
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className={classes.container}>
       {subject ? (
@@ -111,16 +131,23 @@ const Subject = () => {
                 <Typography variant="h5">
                   {subject.name} - {subject.course.name}
                 </Typography>
-                <Typography variant="subtitle1">
-                  {subject.teachers
-                    .map(x => `${x.first_name} ${x.last_name}`)
-                    .join(', ')}
+                <div>
+                  {subject.teachers.map(teacher => (
+                    <Chip
+                      key={teacher.username}
+                      className={classes.chip}
+                      label={`${teacher.first_name} ${teacher.last_name}`}
+                      onDelete={() => removeTeacherHandler(teacher.username)}
+                      deleteIcon={<CloseIcon />}
+                    ></Chip>
+                  ))}
                   {addState ? (
-                    <div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
                       <Select
                         value={selectedTeacher}
                         onChange={handleChange}
                         autoWidth
+                        style={{ width: '15rem' }}
                       >
                         {teachersToAdd.map(x => (
                           <MenuItem key={x.username} value={x.username}>
@@ -144,7 +171,7 @@ const Subject = () => {
                       <AddIcon />
                     </IconButton>
                   )}
-                </Typography>
+                </div>
               </Grid>
               <Grid item xs={12} sm={3}>
                 <Link to={`/attendance/${subjectId}`}>
