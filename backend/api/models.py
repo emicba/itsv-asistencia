@@ -20,12 +20,13 @@ class Course(models.Model):
 class Student(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    dni = models.CharField(max_length=8, unique=True)
-    address = models.TextField()
+    dni = models.CharField(max_length=8, unique=True, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
     course = models.ForeignKey(Course, on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.IntegerField(choices=STUDENT_STATUS_CHOICES)
+    status = models.IntegerField(choices=STUDENT_STATUS_CHOICES, default=1)
+    order = models.SmallIntegerField(default=1)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
