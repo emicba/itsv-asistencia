@@ -122,5 +122,16 @@ export default {
       const error = new Error(data.message || 'Unable to add teacher.');
       throw error;
     },
+    async delete(id) {
+      const response = await fetch(`http://localhost:8000/subjects/${id}`, {
+        method: 'DELETE',
+        ...headers(),
+      });
+      if (response.ok) {
+        return;
+      }
+      const error = new Error('Unable to remove subject.');
+      throw error;
+    },
   },
 };
