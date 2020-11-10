@@ -115,16 +115,26 @@ class SubjectViewSet(viewsets.ModelViewSet):
         operation = request.data.get('op')
         path = request.data.get('path')
         value = request.data.get('value')
-        if (operation == 'add' and path == 'teachers' and value.get('username')):
-            try:
-                user: User = User.objects.get(username=value.get('username'))
-            except User.DoesNotExist:
-                return Response({'message': 'User doesn\'t exist'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            instance: Subject = self.get_object()
-            instance.teachers.add(user)
-            return Response({'message': 'ok'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'message': 'Operation not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if (path == 'teachers' and value.get('username')):
+            if (operation == 'add'):
+                try:
+                    user: User = User.objects.get(username=value.get('username'))
+                except User.DoesNotExist:
+                    return Response({'message': 'User doesn\'t exist'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                instance: Subject = self.get_object()
+                instance.teachers.add(user)
+                return Response({'message': 'ok'}, status=status.HTTP_200_OK)
+            elif (operation == 'remove'):
+                try:
+                    user: User = User.objects.get(username=value.get('username'))
+                except User.DoesNotExist:
+                    return Response({'message': 'User doesn\'t exist'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                instance: Subject = self.get_object()
+                instance.teachers.remove(user)
+                return Response({'message': 'ok'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'Operation not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 
 class TeacherViewSet(mixins.ListModelMixin,
