@@ -10,12 +10,11 @@ export default function StudentsTable({ course }) {
   }, [course]);
 
   const columns = [
-    { title: 'Name', field: 'first_name' },
-    { title: 'Surname', field: 'last_name' },
-    { title: 'Dni', field: 'dni' },
-    { title: 'Address', field: 'address' },
+    { title: 'Orden', field: 'order' },
+    { title: 'Nombre', field: 'first_name' },
+    { title: 'Apellido', field: 'last_name' },
     {
-      title: 'Status',
+      title: 'Estado',
       field: 'status',
       lookup: {
         1: 'CURSANDO',
@@ -27,59 +26,64 @@ export default function StudentsTable({ course }) {
   ];
 
   return (
-    <MaterialTable
-      title="Estudiantes"
-      columns={columns}
-      data={students}
-      editable={{
-        onRowAdd: newData => {
-          const newStudent = { ...newData, course: course.id };
-          return new Promise(resolve => {
-            setTimeout(async () => {
-              try {
-                API.students.add(newStudent);
-                setStudents(prevState => [...prevState, newStudent]);
-              } catch (error) {
-                console.error(error);
-              }
-              resolve();
-            }, 0);
-          });
-        },
-        onRowUpdate: (newData, oldData) => {
-          return new Promise(resolve => {
-            setTimeout(async () => {
-              if (oldData) {
+    !!students && (
+      <MaterialTable
+        title="Estudiantes"
+        columns={columns}
+        data={students}
+        options={{
+          pageSize: 11,
+        }}
+        editable={{
+          onRowAdd: newData => {
+            const newStudent = { ...newData, course: course.id };
+            return new Promise(resolve => {
+              setTimeout(async () => {
                 try {
-                  API.students.update(newData.id, newData);
-                  setStudents(prevState => {
-                    return prevState.map(student => {
-                      return student.id === newData.id ? newData : student;
-                    });
-                  });
+                  API.students.add(newStudent);
+                  setStudents(prevState => [...prevState, newStudent]);
                 } catch (error) {
                   console.error(error);
                 }
                 resolve();
-              }
-            }, 0);
-          });
-        },
-        onRowDelete: oldData =>
-          new Promise(resolve => {
-            setTimeout(async () => {
-              try {
-                API.students.delete(oldData.id);
-                setStudents(prevState =>
-                  prevState.filter(student => student.id !== oldData.id),
-                );
-              } catch (error) {
-                console.error(error);
-              }
-              resolve();
-            }, 0);
-          }),
-      }}
-    />
+              }, 0);
+            });
+          },
+          onRowUpdate: (newData, oldData) => {
+            return new Promise(resolve => {
+              setTimeout(async () => {
+                if (oldData) {
+                  try {
+                    API.students.update(newData.id, newData);
+                    setStudents(prevState => {
+                      return prevState.map(student => {
+                        return student.id === newData.id ? newData : student;
+                      });
+                    });
+                  } catch (error) {
+                    console.error(error);
+                  }
+                  resolve();
+                }
+              }, 0);
+            });
+          },
+          onRowDelete: oldData =>
+            new Promise(resolve => {
+              setTimeout(async () => {
+                try {
+                  API.students.delete(oldData.id);
+                  setStudents(prevState =>
+                    prevState.filter(student => student.id !== oldData.id),
+                  );
+                } catch (error) {
+                  console.error(error);
+                }
+                resolve();
+              }, 0);
+            }),
+        }}
+      />
+    )
   );
 }
