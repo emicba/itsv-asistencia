@@ -5,7 +5,6 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from .models import Course, Student, Attendance, Parent, Allergy, Diet, Subject
-from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import CourseSerializer, StudentSerializer, AttendanceSerializer, ParentSerializer, AllergySerializer, DietSerializer, SubjectMinSerializer, SubjectSerializer, UserSerializer
 from rest_framework.request import Request
 from django.utils.timezone import get_current_timezone
@@ -21,8 +20,14 @@ class CourseViewSet(viewsets.ModelViewSet):
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['course_id']
+
+    def get_serializer(self, instance=None, data=None, many=False, *args, **kwargs):
+        return super().get_serializer(
+            instance=instance,
+            data=data,
+            many=isinstance(instance, list) or isinstance(data, list),
+            *args,
+            **kwargs)
 
 
 class AttendanceViewSet(viewsets.ModelViewSet):
@@ -40,10 +45,10 @@ class AttendanceViewSet(viewsets.ModelViewSet):
                 Attendance.objects.create(
                     student=student_instance,
                     subject=subject_instance,
-                    start_date=datetime.fromtimestamp(start_date, tz=get_current_timezone()),
+                    start_date=datetime.fromtimestamp(
+                        start_date, tz=get_current_timezone()),
                     attended=attended,
-                    justified=justified
-                )
+                    justified=justified)
 
             return JsonResponse({'message': 'ok'}, status=status.HTTP_200_OK)
         except AttributeError as ERROR:
@@ -103,7 +108,8 @@ class SubjectViewSet(viewsets.ModelViewSet):
         if name and course:
             try:
                 course_instance = Course.objects.get(name=course)
-                instance = Subject.objects.create(course=course_instance, name=name)
+                instance = Subject.objects.create(
+                    course=course_instance, name=name)
                 serializer = SubjectMinSerializer(instance)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except Course.DoesNotExist:
@@ -118,7 +124,7 @@ class SubjectViewSet(viewsets.ModelViewSet):
         if (path == 'teachers' and value.get('username')):
             if (operation == 'add'):
                 try:
-                    user: User = User.objects.get(username=value.get('username'))
+                    user = User.objects.get(username=value.get('username'))
                 except User.DoesNotExist:
                     return Response({'message': 'User doesn\'t exist'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 instance: Subject = self.get_object()
@@ -126,7 +132,7 @@ class SubjectViewSet(viewsets.ModelViewSet):
                 return Response({'message': 'ok'}, status=status.HTTP_200_OK)
             elif (operation == 'remove'):
                 try:
-                    user: User = User.objects.get(username=value.get('username'))
+                    user = User.objects.get(username=value.get('username'))
                 except User.DoesNotExist:
                     return Response({'message': 'User doesn\'t exist'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 instance: Subject = self.get_object()
@@ -134,7 +140,6 @@ class SubjectViewSet(viewsets.ModelViewSet):
                 return Response({'message': 'ok'}, status=status.HTTP_200_OK)
             else:
                 return Response({'message': 'Operation not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
 
 
 class TeacherViewSet(mixins.ListModelMixin,

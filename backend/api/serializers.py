@@ -6,7 +6,8 @@ from .models import Course, Student, Attendance, Parent, Allergy, Diet, Subject
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ('id', 'first_name', 'last_name', 'dni', 'address', 'status', 'course')
+        fields = ('id', 'first_name', 'last_name', 'status', 'course', 'order')
+
 
 class StudentMinSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,7 +38,8 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attendance
-        fields = ('id', 'start_date', 'attended', 'justified', 'student', 'subject')
+        fields = ('id', 'start_date', 'attended',
+                  'justified', 'student', 'subject')
 
 
 class ParentSerializer(serializers.ModelSerializer):
@@ -87,7 +89,8 @@ class SubjectSerializer(serializers.ModelSerializer):
         return UserSerializer(teachers, many=True, read_only=True).data
 
     def get_meets(self, obj):
-        meets = Attendance.objects.filter(subject=obj).values('start_date').distinct()
+        meets = Attendance.objects.filter(
+            subject=obj).values('start_date').distinct()
         return meets.order_by('-start_date')
 
     class Meta:
