@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import { useHistory } from 'react-router-dom';
 import API from '../API';
-
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-});
+import {
+  List,
+  Avatar,
+  IconButton,
+  ListItem,
+  ListItemAvatar,
+  ListItemSecondaryAction,
+  ListItemText,
+} from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
+import AddIcon from '@material-ui/icons/Add';
+import FolderIcon from '@material-ui/icons/Folder';
 
 const CourseTable = () => {
-  const classes = useStyles();
-
   const [courses, setCourses] = useState([]);
+  const [file, setFile] = useState('');
 
   const history = useHistory();
 
@@ -40,29 +36,50 @@ const CourseTable = () => {
     history.push(`/course/${id}`);
   };
 
+  const handleInputFileClick = e => {
+    console.log(e.target.value);
+    setFile(e.target.value);
+  };
+
   return (
-    <div style={{ marginTop: '4.5rem' }}>
-      <TableContainer component={Paper}>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Cursos</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {!!courses &&
-              courses.map(course => (
-                <TableRow
-                  key={course.id}
-                  onClick={() => handleCourseClick(course.id)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <TableCell>{course.name}</TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <List style={{ width: '100%' }}>
+        {!!courses &&
+          courses.map(course => (
+            <ListItem
+              key={course.id}
+              button
+              style={{ marginLeft: '2rem' }}
+              onClick={() => handleCourseClick(course.id)}
+            >
+              <ListItemAvatar>
+                <Avatar>
+                  <FolderIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={course.name}
+                style={{ marginLeft: '1rem' }}
+              />
+              <ListItemSecondaryAction>
+                <label htmlFor="upload-photo">
+                  <input
+                    style={{ display: 'none' }}
+                    id="upload-photo"
+                    name="upload-photo"
+                    type="file"
+                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    onChange={e => handleInputFileClick(e)}
+                  />
+
+                  <IconButton component="span" aria-label="add">
+                    <AddIcon />
+                  </IconButton>
+                </label>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+      </List>
     </div>
   );
 };
