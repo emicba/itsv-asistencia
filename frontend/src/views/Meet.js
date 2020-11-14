@@ -1,34 +1,16 @@
-import { Grid, Typography, makeStyles, Paper } from '@material-ui/core';
+import { Grid, Typography, Paper } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import API from '../API';
 import Loading from '../components/Loading';
 import MeetTable from '../components/MeetTable';
-import { formatDate } from '../utils';
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    justifyContent: 'center',
-    width: '100%',
-    flexDirection: 'column',
-  },
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  header: {
-    width: '100%',
-    padding: '1rem',
-  },
-}));
+import { formatDate, useCommonStyles } from '../utils';
 
 const Meet = () => {
   const { id: subjectId, start_date: startDate } = useParams();
   const [subject, setSubject] = useState(null);
   const [attendance, setAttendance] = useState(null);
-  const classes = useStyles();
+  const classes = useCommonStyles();
 
   useEffect(() => {
     fetchCourse(subjectId);

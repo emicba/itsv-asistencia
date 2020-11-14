@@ -32,7 +32,7 @@ export default function StudentsTable({ course }) {
         columns={columns}
         data={students}
         options={{
-          pageSize: 11,
+          pageSize: 10,
         }}
         editable={{
           onRowAdd: newData => {

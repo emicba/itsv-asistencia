@@ -3,19 +3,15 @@ import API from '../API';
 import {
   List,
   Avatar,
-  IconButton,
   ListItem,
   ListItemAvatar,
-  ListItemSecondaryAction,
   ListItemText,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import AddIcon from '@material-ui/icons/Add';
 import FolderIcon from '@material-ui/icons/Folder';
 
 const CourseTable = () => {
   const [courses, setCourses] = useState([]);
-  const [file, setFile] = useState('');
 
   const history = useHistory();
 
@@ -34,11 +30,6 @@ const CourseTable = () => {
 
   const handleCourseClick = id => {
     history.push(`/course/${id}`);
-  };
-
-  const handleInputFileClick = e => {
-    console.log(e.target.value);
-    setFile(e.target.value);
   };
 
   return (
@@ -61,22 +52,6 @@ const CourseTable = () => {
                 primary={course.name}
                 style={{ marginLeft: '1rem' }}
               />
-              <ListItemSecondaryAction>
-                <label htmlFor="upload-photo">
-                  <input
-                    style={{ display: 'none' }}
-                    id="upload-photo"
-                    name="upload-photo"
-                    type="file"
-                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    onChange={e => handleInputFileClick(e)}
-                  />
-
-                  <IconButton component="span" aria-label="add">
-                    <AddIcon />
-                  </IconButton>
-                </label>
-              </ListItemSecondaryAction>
             </ListItem>
           ))}
       </List>
