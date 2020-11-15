@@ -12,6 +12,7 @@ import {
 import { cloneDeep, orderBy } from 'lodash';
 
 const tableHead = [
+  { orderField: 'student.order', title: 'Orden' },
   { orderField: 'student.last_name', title: 'Nombre' },
   { orderField: 'attended', title: 'Asistencia' },
   { orderField: 'justified', title: 'Justificado' },
@@ -19,7 +20,7 @@ const tableHead = [
 
 const MeetTable = ({ attendance }) => {
   const [sortedAttendance, setSortedAttendance] = useState(null);
-  const [orderField, setOrderField] = useState('student.last_name');
+  const [orderField, setOrderField] = useState('order');
   const [order, setOrder] = useState('asc');
 
   useEffect(() => {
@@ -56,8 +57,9 @@ const MeetTable = ({ attendance }) => {
           <TableBody>
             {sortedAttendance.map(x => (
               <TableRow key={x.id}>
+                <TableCell>{x.student.order}</TableCell>
                 <TableCell>
-                  {x.student.first_name} {x.student.last_name}
+                  {x.student.last_name} {x.student.first_name}
                 </TableCell>
                 <TableCell>
                   <Checkbox checked={x.attended}></Checkbox>

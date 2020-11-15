@@ -62,7 +62,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
             qs = Attendance.objects.filter(
                 subject=subject_obj,
                 start_date=start_date
-            ).order_by('student__last_name', 'student__first_name')
+            ).order_by('student__order', 'student__last_name', 'student__first_name')
         else:
             qs = Attendance.objects.none()
         return qs

@@ -38,7 +38,7 @@ const AttendanceList = ({
           {students.map(student => (
             <TableRow key={student.id}>
               <TableCell>
-                {`${student.first_name} ${student.last_name}`}
+                {`${student.last_name} ${student.first_name}`}
               </TableCell>
               <TableCell>
                 <Checkbox

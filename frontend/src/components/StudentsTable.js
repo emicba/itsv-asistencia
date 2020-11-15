@@ -10,9 +10,9 @@ export default function StudentsTable({ course }) {
   }, [course]);
 
   const columns = [
-    { title: 'Orden', field: 'order' },
-    { title: 'Nombre', field: 'first_name' },
+    { title: 'Orden', field: 'order', defaultSort: 'asc' },
     { title: 'Apellido', field: 'last_name' },
+    { title: 'Nombre', field: 'first_name' },
     {
       title: 'Estado',
       field: 'status',
