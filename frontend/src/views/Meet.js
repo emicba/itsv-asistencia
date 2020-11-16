@@ -68,6 +68,7 @@ const Meet = () => {
               </Grid>
             </Grid>
           </Paper>
+
           <MeetTable attendance={attendance} />
         </div>
       ) : (

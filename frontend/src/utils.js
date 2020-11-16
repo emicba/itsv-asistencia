@@ -22,6 +22,7 @@ export const useCommonStyles = makeStyles(theme => ({
   header: {
     width: '100%',
     padding: '1rem',
+    marginBottom: '1rem',
   },
 }));
 
