@@ -11,6 +11,7 @@ import Container from '@material-ui/core/Container';
 import { UserContext } from './UserContext';
 import Subject from './views/Subject';
 import Meet from './views/Meet';
+import Student from './views/Student';
 
 const routes = [
   {
@@ -55,6 +56,12 @@ const routes = [
     exact: true,
     component: <Meet />,
   },
+  {
+    name: 'Student',
+    path: '/student/:id',
+    exact: true,
+    component: <Student />,
+  },
 ];
 
 function App() {
@@ -69,7 +76,7 @@ function App() {
               ['Home', 'Courses', 'Subjects'].includes(x.name),
             )}
           />
-          <Container style={{ marginTop: '5rem' }}>
+          <Container style={{ marginTop: '1rem' }}>
             <Switch>
               {routes.map(route => (
                 <Route

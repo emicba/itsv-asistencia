@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import MaterialTable from 'material-table';
 import API from '../API';
+import { useHistory } from 'react-router-dom';
 
 export default function StudentsTable({ course }) {
   const [students, setStudents] = useState([]);
+  const history = useHistory();
 
   useEffect(() => {
     setStudents(course.students);
@@ -33,6 +35,9 @@ export default function StudentsTable({ course }) {
         data={students}
         options={{
           pageSize: 10,
+        }}
+        onRowClick={(e, row) => {
+          history.push(`/student/${row.id}`);
         }}
         editable={{
           onRowAdd: newData => {
