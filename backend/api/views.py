@@ -5,7 +5,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from .models import Course, Student, Attendance, Parent, Allergy, Diet, Subject
-from .serializers import CourseSerializer, StudentSerializer, AttendanceSerializer, ParentSerializer, AllergySerializer, DietSerializer, SubjectMinSerializer, SubjectSerializer, UserSerializer
+from .serializers import CourseSerializer, StudentMeetsSerializer, StudentSerializer, AttendanceMinSerializer, ParentSerializer, AllergySerializer, DietSerializer, SubjectMinSerializer, SubjectSerializer, UserSerializer
 from rest_framework.request import Request
 from django.utils.timezone import get_current_timezone
 from rest_framework import status
@@ -22,17 +22,33 @@ class StudentViewSet(viewsets.ModelViewSet):
     serializer_class = StudentSerializer
 
     def get_serializer(self, instance=None, data=None, many=False, *args, **kwargs):
-        return super().get_serializer(
-            instance=instance,
-            data=data,
-            many=isinstance(instance, list) or isinstance(data, list),
-            *args,
-            **kwargs)
+        if data == None:
+            return super().get_serializer(
+                instance=instance,
+                many=False,
+                *args,
+                **kwargs
+            )
+        else:
+            return super().get_serializer(
+                data=data,
+                many=isinstance(instance, list) or isinstance(data, list),
+                *args,
+                **kwargs)
+
+    def retrieve(self, request: Request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = StudentMeetsSerializer(instance)
+        meets = Attendance.objects.filter(
+            student=instance).order_by('-start_date')
+        serializer.data['meets'] = AttendanceMinSerializer(
+            instance=meets, many=True).data
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AttendanceViewSet(viewsets.ModelViewSet):
     queryset = Attendance.objects.all()
-    serializer_class = AttendanceSerializer
+    serializer_class = AttendanceMinSerializer
 
     def create(self, request: Request, *args, **kwargs):
         try:
