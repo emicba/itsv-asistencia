@@ -70,7 +70,7 @@ export default function Login() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Iniciar sesión
         </Typography>
         <form onSubmit={loginHandler} className={classes.form} noValidate>
           <TextField
@@ -80,7 +80,7 @@ export default function Login() {
             required
             fullWidth
             id="Username"
-            label="Username"
+            label="Nombre de usuario"
             name="Username"
             autoComplete="username"
             autoFocus
@@ -92,7 +92,7 @@ export default function Login() {
             required
             fullWidth
             name="password"
-            label="Password"
+            label="Contraseña"
             type="password"
             id="password"
             autoComplete="current-password"
@@ -104,7 +104,7 @@ export default function Login() {
             color="primary"
             className={classes.submit}
           >
-            Sign In
+            Iniciar sesión
           </Button>
         </form>
         {!!error && (

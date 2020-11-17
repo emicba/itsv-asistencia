@@ -129,7 +129,7 @@ export default function PersistentDrawerLeft({ routes }) {
                 localStorage.removeItem('itsv-asistencia-token');
               }}
             >
-              Logout
+              Cerrar sesión
             </Link>
           </Button>
         </Toolbar>
@@ -148,8 +148,8 @@ export default function PersistentDrawerLeft({ routes }) {
             {theme.direction === 'ltr' ? (
               <ChevronLeftIcon />
             ) : (
-              <ChevronRightIcon />
-            )}
+                <ChevronRightIcon />
+              )}
           </IconButton>
         </div>
         <Divider />

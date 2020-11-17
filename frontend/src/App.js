@@ -15,16 +15,18 @@ import Student from './views/Student';
 
 const routes = [
   {
-    name: 'Home',
+    name: 'Inicio',
     path: '/',
     exact: true,
     component: <Home />,
+    showInDrawer: true
   },
   {
-    name: 'Courses',
+    name: 'Cursos',
     path: '/courses',
     exact: true,
     component: <Courses />,
+    showInDrawer: true
   },
   {
     name: 'Course',
@@ -39,10 +41,11 @@ const routes = [
     component: <Attendance />,
   },
   {
-    name: 'Subjects',
+    name: 'Materias',
     path: '/subjects',
     exact: true,
     component: <Subjects />,
+    showInDrawer: true
   },
   {
     name: 'Subject',
@@ -72,9 +75,7 @@ function App() {
       {!!user ? (
         <Router>
           <PersistentDrawerLeft
-            routes={routes.filter(x =>
-              ['Home', 'Courses', 'Subjects'].includes(x.name),
-            )}
+            routes={routes.filter(x => x.showInDrawer)}
           />
           <Container style={{ marginTop: '1rem' }}>
             <Switch>
@@ -90,8 +91,8 @@ function App() {
           </Container>
         </Router>
       ) : (
-        <Login />
-      )}
+          <Login />
+        )}
     </div>
   );
 }
