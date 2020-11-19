@@ -24,6 +24,9 @@ export const useCommonStyles = makeStyles(theme => ({
     padding: '1rem',
     marginBottom: '1rem',
   },
+  chip: {
+    margin: '0 .3rem',
+  },
 }));
 
 export const readExcel = file => {

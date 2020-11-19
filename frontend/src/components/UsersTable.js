@@ -2,6 +2,14 @@ import React, { useEffect, useState } from 'react';
 import MaterialTable from 'material-table';
 import API from '../API';
 
+const validate = data => {
+  return (
+    !data.username?.trim() ||
+    !data.first_name?.trim() ||
+    !data.last_name?.trim()
+  );
+};
+
 export default function UsersMaterialTable({ users }) {
   const [user, setUsers] = useState([]);
 
@@ -13,8 +21,8 @@ export default function UsersMaterialTable({ users }) {
     { title: 'Usuario', field: 'username', defaultSort: 'asc' },
     { title: 'Apellido', field: 'last_name' },
     { title: 'Nombre', field: 'first_name' },
-    { title: 'Contraseña', field: 'password' },
-    { title: 'Admin', field: 'admin', type: 'boolean' },
+    { title: 'Contraseña', field: 'password', render: () => <span></span> },
+    { title: 'Admin', field: 'is_staff', type: 'boolean' },
   ];
 
   return (
@@ -30,9 +38,10 @@ export default function UsersMaterialTable({ users }) {
           onRowAdd: newData => {
             return new Promise(resolve => {
               setTimeout(async () => {
+                if (validate(newData) || !newData.password) return resolve();
                 try {
-                  API.users.create(newData);
-                  setUsers(prevState => [...prevState, newData]);
+                  const data = await API.users.create(newData);
+                  setUsers(prevState => [...prevState, data]);
                 } catch (error) {
                   console.error(error);
                 }
@@ -44,11 +53,14 @@ export default function UsersMaterialTable({ users }) {
             return new Promise(resolve => {
               setTimeout(async () => {
                 if (oldData) {
+                  if (validate(newData)) return resolve();
                   try {
                     API.users.update(newData.id, newData);
                     setUsers(prevState => {
                       return prevState.map(user => {
-                        return user.id === newData.id ? newData : user;
+                        return user.id === newData.id
+                          ? { ...newData, password: null }
+                          : user;
                       });
                     });
                   } catch (error) {

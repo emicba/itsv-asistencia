@@ -6,6 +6,11 @@ const headers = () => ({
   },
 });
 
+const removeToken = () => {
+  localStorage.removeItem('itsv-asistencia-token');
+  window.location.reload();
+};
+
 export default {
   async login(username, password) {
     const response = await fetch('http://localhost:8000/auth/', {
@@ -33,6 +38,7 @@ export default {
     if (response.ok) {
       return data;
     }
+    if (response.status === 401) removeToken();
     const error = new Error(data.message || 'Unable to fetch.');
     throw error;
   },
@@ -182,12 +188,12 @@ export default {
     },
     async update(id, data) {
       const response = await fetch(`http://localhost:8000/teachers/${id}/`, {
-        method: 'PUT',
+        method: 'PATCH',
         ...headers(),
         body: JSON.stringify(data),
       });
       if (response.ok) {
-        return;
+        return await response.json();
       }
       const error = new Error('Unable to update user.');
       throw error;
