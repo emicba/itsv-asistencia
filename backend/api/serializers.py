@@ -109,13 +109,17 @@ class DietSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id','username', 'first_name', 'last_name')
+        fields = ('id', 'is_staff', 'username', 'first_name', 'last_name')
 
 
 class SubjectSerializer(serializers.ModelSerializer):
     teachers = serializers.SerializerMethodField()
-    course = CourseSerializer()
+    course_name = serializers.SerializerMethodField()
     meets = serializers.SerializerMethodField()
+    students = serializers.SerializerMethodField()
+
+    def get_course_name(self, obj):
+        return obj.course.name
 
     def get_teachers(self, obj):
         teachers = obj.teachers.all()
@@ -125,6 +129,10 @@ class SubjectSerializer(serializers.ModelSerializer):
         meets = Attendance.objects.filter(
             subject=obj).values('start_date').distinct()
         return meets.order_by('-start_date')
+
+    def get_students(self, obj):
+        students = obj.course.student_set.all()
+        return StudentMinSerializer(students, many=True).data
 
     class Meta:
         model = Subject

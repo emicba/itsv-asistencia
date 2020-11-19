@@ -3,11 +3,18 @@ from django.http.response import JsonResponse
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.routers import APIRootView
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from .models import Course, Student, Attendance, Parent, Allergy, Diet, Subject
 from .serializers import CourseSerializer, StudentMeetsSerializer, StudentSerializer, AttendanceMinSerializer, ParentSerializer, AllergySerializer, DietSerializer, SubjectMinSerializer, SubjectSerializer, UserSerializer
 from rest_framework.request import Request
 from django.utils.timezone import get_current_timezone
 from rest_framework import status
+
+
+class RootView(APIRootView):
+    def get(self, request, *args, **kwargs):
+        return Response(status=HTTP_200_OK)
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -103,7 +110,7 @@ class SubjectViewSet(viewsets.ModelViewSet):
 
     def list(self, request: Request, *args, **kwargs):
         user: User = request.user
-        if user.is_superuser:
+        if user.is_staff:
             subjects = Subject.objects.all()
         else:
             subjects = Subject.objects.filter(teachers=user)
@@ -165,17 +172,32 @@ class TeacherViewSet(viewsets.ModelViewSet):
         last_name = request.data.get('last_name')
         first_name = request.data.get('first_name')
         password = request.data.get('password')
-        admin = request.data.get('admin')
+        admin = request.data.get('is_staff')
         if username and last_name and first_name and password:
             if (admin == True):
-                instance = User.objects.create_user(username, first_name=first_name, last_name=last_name, password=password)
-                instance.is_superuser=True
-                instance.is_staff=True
+                instance = User.objects.create_user(
+                    username, first_name=first_name, last_name=last_name, password=password)
+                instance.is_staff = True
             else:
-                instance = User.objects.create_user(username, first_name=first_name, last_name=last_name, password=password)
+                instance = User.objects.create_user(
+                    username, first_name=first_name, last_name=last_name, password=password)
             instance.save()
             serializer = UserSerializer(instance)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({'message': 'All fields must be provided.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def partial_update(self, request: Request, *args, **kwargs):
+        instance: User = self.get_object()
+        serializer: UserSerializer = self.get_serializer(
+            instance, data=request.data, partial=True)
+        if (serializer.is_valid()):
+            if not request.data.get('password', False):
+                return super().partial_update(request, *args, **kwargs)
+            else:
+                instance.set_password(request.data.get('password'))
+                instance.save()
+                if (hasattr(instance, 'auth_token')):
+                    instance.auth_token.delete()
+                return Response(serializer.data, status=HTTP_200_OK)
+        return Response({'message': 'Can\'t update user', 'errors': serializer.error_messages}, status=HTTP_400_BAD_REQUEST)

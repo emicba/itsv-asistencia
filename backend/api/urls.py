@@ -1,9 +1,11 @@
 from django.urls import include, path
 from rest_framework import routers
-from .views import CourseViewSet, StudentViewSet, AttendanceViewSet, ParentViewSet, AllergyViewSet, DietViewSet, SubjectViewSet, TeacherViewSet
+from rest_framework.routers import DefaultRouter
+from .views import RootView, CourseViewSet, StudentViewSet, AttendanceViewSet, ParentViewSet, AllergyViewSet, DietViewSet, SubjectViewSet, TeacherViewSet
 from rest_framework.authtoken import views as auth_views
 
-router = routers.DefaultRouter()
+router: DefaultRouter = routers.DefaultRouter()
+router.APIRootView = RootView
 router.register(r'courses', CourseViewSet)
 router.register(r'students', StudentViewSet)
 router.register(r'attendances', AttendanceViewSet)
