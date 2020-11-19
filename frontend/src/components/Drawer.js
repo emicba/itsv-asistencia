@@ -148,8 +148,8 @@ export default function PersistentDrawerLeft({ routes }) {
             {theme.direction === 'ltr' ? (
               <ChevronLeftIcon />
             ) : (
-                <ChevronRightIcon />
-              )}
+              <ChevronRightIcon />
+            )}
           </IconButton>
         </div>
         <Divider />
@@ -162,9 +162,7 @@ export default function PersistentDrawerLeft({ routes }) {
               onClick={handleDrawerClose}
             >
               <ListItem button key={route.name}>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
+                <ListItemIcon>{route.icon}</ListItemIcon>
                 <ListItemText primary={route.name} />
               </ListItem>
             </Link>

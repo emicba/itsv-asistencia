@@ -13,6 +13,12 @@ import Subject from './views/Subject';
 import Meet from './views/Meet';
 import Student from './views/Student';
 import Users from './views/Users';
+import {
+  Home as HomeIcon,
+  Class as ClassIcon,
+  Folder as FolderIcon,
+  AccountCircle as AccountCircleIcon,
+} from '@material-ui/icons';
 
 const routes = [
   {
@@ -21,6 +27,7 @@ const routes = [
     exact: true,
     component: <Home />,
     showInDrawer: true,
+    icon: <HomeIcon />,
   },
   {
     name: 'Cursos',
@@ -28,6 +35,7 @@ const routes = [
     exact: true,
     component: <Courses />,
     showInDrawer: true,
+    icon: <ClassIcon />,
   },
   {
     name: 'Course',
@@ -47,6 +55,7 @@ const routes = [
     exact: true,
     component: <Subjects />,
     showInDrawer: true,
+    icon: <FolderIcon />,
   },
   {
     name: 'Subject',
@@ -72,6 +81,7 @@ const routes = [
     exact: true,
     component: <Users />,
     showInDrawer: true,
+    icon: <AccountCircleIcon />,
   },
 ];
 
