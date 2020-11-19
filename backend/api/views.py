@@ -3,13 +3,11 @@ from django.http.response import JsonResponse
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
 from .models import Course, Student, Attendance, Parent, Allergy, Diet, Subject
 from .serializers import CourseSerializer, StudentMeetsSerializer, StudentSerializer, AttendanceMinSerializer, ParentSerializer, AllergySerializer, DietSerializer, SubjectMinSerializer, SubjectSerializer, UserSerializer
 from rest_framework.request import Request
 from django.utils.timezone import get_current_timezone
 from rest_framework import status
-from rest_framework import mixins
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -158,7 +156,26 @@ class SubjectViewSet(viewsets.ModelViewSet):
                 return Response({'message': 'Operation not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-class TeacherViewSet(mixins.ListModelMixin,
-                     GenericViewSet):
+class TeacherViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def create(self, request: Request, *args, **kwargs):
+        username = request.data.get('username')
+        last_name = request.data.get('last_name')
+        first_name = request.data.get('first_name')
+        password = request.data.get('password')
+        admin = request.data.get('admin')
+        if username and last_name and first_name and password:
+            if (admin == True):
+                instance = User.objects.create_user(username, first_name=first_name, last_name=last_name, password=password)
+                instance.is_superuser=True
+                instance.is_staff=True
+            else:
+                instance = User.objects.create_user(username, first_name=first_name, last_name=last_name, password=password)
+            instance.save()
+            serializer = UserSerializer(instance)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'message': 'All fields must be provided.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

@@ -12,6 +12,7 @@ import { UserContext } from './UserContext';
 import Subject from './views/Subject';
 import Meet from './views/Meet';
 import Student from './views/Student';
+import Users from './views/Users';
 
 const routes = [
   {
@@ -19,14 +20,14 @@ const routes = [
     path: '/',
     exact: true,
     component: <Home />,
-    showInDrawer: true
+    showInDrawer: true,
   },
   {
     name: 'Cursos',
     path: '/courses',
     exact: true,
     component: <Courses />,
-    showInDrawer: true
+    showInDrawer: true,
   },
   {
     name: 'Course',
@@ -45,7 +46,7 @@ const routes = [
     path: '/subjects',
     exact: true,
     component: <Subjects />,
-    showInDrawer: true
+    showInDrawer: true,
   },
   {
     name: 'Subject',
@@ -65,6 +66,13 @@ const routes = [
     exact: true,
     component: <Student />,
   },
+  {
+    name: 'Usuarios',
+    path: '/users/',
+    exact: true,
+    component: <Users />,
+    showInDrawer: true,
+  },
 ];
 
 function App() {
@@ -74,9 +82,7 @@ function App() {
     <div>
       {!!user ? (
         <Router>
-          <PersistentDrawerLeft
-            routes={routes.filter(x => x.showInDrawer)}
-          />
+          <PersistentDrawerLeft routes={routes.filter(x => x.showInDrawer)} />
           <Container style={{ marginTop: '1rem' }}>
             <Switch>
               {routes.map(route => (
@@ -91,8 +97,8 @@ function App() {
           </Container>
         </Router>
       ) : (
-          <Login />
-        )}
+        <Login />
+      )}
     </div>
   );
 }

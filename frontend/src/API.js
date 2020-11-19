@@ -156,4 +156,41 @@ export default {
       throw error;
     },
   },
+  users: {
+    async create(data) {
+      const response = await fetch(`http://localhost:8000/teachers/`, {
+        method: 'POST',
+        ...headers(),
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+      const error = new Error('Unable to add user.');
+      throw error;
+    },
+    async delete(id) {
+      const response = await fetch(`http://localhost:8000/teachers/${id}`, {
+        method: 'DELETE',
+        ...headers(),
+      });
+      if (response.ok) {
+        return;
+      }
+      const error = new Error('Unable to remove user.');
+      throw error;
+    },
+    async update(id, data) {
+      const response = await fetch(`http://localhost:8000/teachers/${id}/`, {
+        method: 'PUT',
+        ...headers(),
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        return;
+      }
+      const error = new Error('Unable to update user.');
+      throw error;
+    },
+  },
 };
