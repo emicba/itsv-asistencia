@@ -48,7 +48,7 @@ class CourseSerializer(serializers.ModelSerializer):
     students = serializers.SerializerMethodField()
 
     def get_students(self, obj):
-        students = Student.objects.filter(course=obj)
+        students = Student.objects.filter(course=obj, active=True)
         return StudentSerializer(students, many=True, read_only=True).data
 
     class Meta:

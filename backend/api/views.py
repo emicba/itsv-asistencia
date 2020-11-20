@@ -18,12 +18,12 @@ class RootView(APIRootView):
 
 
 class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.all()
+    queryset = Course.objects.filter(active=True)
     serializer_class = CourseSerializer
 
 
 class StudentViewSet(viewsets.ModelViewSet):
-    queryset = Student.objects.all()
+    queryset = Student.objects.filter(active=True)
     serializer_class = StudentSerializer
 
     def get_serializer(self, instance=None, data=None, many=False, *args, **kwargs):
@@ -49,6 +49,12 @@ class StudentViewSet(viewsets.ModelViewSet):
         serializer.data['meets'] = AttendanceMinSerializer(
             instance=meets, many=True).data
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.active = False
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AttendanceViewSet(viewsets.ModelViewSet):
@@ -105,15 +111,15 @@ class DietViewSet(viewsets.ModelViewSet):
 
 
 class SubjectViewSet(viewsets.ModelViewSet):
-    queryset = Subject.objects.all()
+    queryset = Subject.objects.filter(active=True)
     serializer_class = SubjectMinSerializer
 
     def list(self, request: Request, *args, **kwargs):
         user: User = request.user
         if user.is_staff:
-            subjects = Subject.objects.all()
+            subjects = Subject.objects.filter(active=True)
         else:
-            subjects = Subject.objects.filter(teachers=user)
+            subjects = Subject.objects.filter(teachers=user, active=True)
 
         serializer = SubjectMinSerializer(subjects, many=True, read_only=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -161,6 +167,12 @@ class SubjectViewSet(viewsets.ModelViewSet):
                 return Response({'message': 'ok'}, status=status.HTTP_200_OK)
             else:
                 return Response({'message': 'Operation not allowed.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.active = False
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TeacherViewSet(viewsets.ModelViewSet):
