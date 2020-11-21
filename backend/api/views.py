@@ -56,6 +56,20 @@ class StudentViewSet(viewsets.ModelViewSet):
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if isinstance(request.data, list):
+            Student.objects.bulk_create([
+                Student(order=x['order'],
+                        first_name=x['first_name'],
+                        last_name=x['last_name'],
+                        course_id=x['course'],
+                        status=x['status']) for x in request.data])
+        else:
+            self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class AttendanceViewSet(viewsets.ModelViewSet):
     queryset = Attendance.objects.all()
@@ -63,20 +77,20 @@ class AttendanceViewSet(viewsets.ModelViewSet):
 
     def create(self, request: Request, *args, **kwargs):
         try:
-            subject_instance = Subject.objects.get(id=request.data['subject'])
+            subject_id = request.data['subject']
             start_date = request.data['start_date']
+            result = []
 
             for student_id, attended in request.data['students'].items():
-                student_instance = Student.objects.get(id=student_id)
                 justified = None if attended else request.data['justified'][student_id]
-                Attendance.objects.create(
-                    student=student_instance,
-                    subject=subject_instance,
-                    start_date=datetime.fromtimestamp(
-                        start_date, tz=get_current_timezone()),
-                    attended=attended,
-                    justified=justified)
+                result.append(Attendance(student_id=student_id,
+                                      subject_id=subject_id,
+                                      start_date=datetime.fromtimestamp(
+                                          start_date, tz=get_current_timezone()),
+                                      attended=attended,
+                                      justified=justified))
 
+            Attendance.objects.bulk_create(result)
             return JsonResponse({'message': 'ok'}, status=status.HTTP_200_OK)
         except AttributeError as ERROR:
             return JsonResponse({'message': str(ERROR)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
