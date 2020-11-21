@@ -112,6 +112,14 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'is_staff', 'username', 'first_name', 'last_name')
 
 
+class StudentAttendanceSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    order = serializers.IntegerField(read_only=True)
+    first_name = serializers.CharField(read_only=True, max_length=100)
+    last_name = serializers.CharField(read_only=True, max_length=100)
+    attendance_percentage = serializers.FloatField(read_only=True)
+
+
 class SubjectSerializer(serializers.ModelSerializer):
     teachers = serializers.SerializerMethodField()
     course_name = serializers.SerializerMethodField()
@@ -130,9 +138,10 @@ class SubjectSerializer(serializers.ModelSerializer):
             subject=obj).values('start_date').distinct()
         return meets.order_by('-start_date')
 
-    def get_students(self, obj):
-        students = obj.course.student_set.all()
-        return StudentMinSerializer(students, many=True).data
+    def get_students(self, obj: Subject):
+        students = obj.course.student_set.filter(active=True).values('id', 'order', 'first_name', 'last_name').annotate(attendance_percentage=Cast(
+            Count('attendance', filter=Q(attendance__attended=True))/Count('attendance'), DecimalField(max_digits=5, decimal_places=2))*100)
+        return StudentAttendanceSerializer(students, many=True).data
 
     class Meta:
         model = Subject
