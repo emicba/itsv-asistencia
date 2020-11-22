@@ -19,10 +19,10 @@ export default function StudentsTable({ course }) {
       title: 'Estado',
       field: 'status',
       lookup: {
-        1: 'CURSANDO',
-        2: 'EGRESADO',
-        3: 'SALIDO CON PASE',
-        4: 'SALIDO SIN PASE',
+        1: 'Cursando',
+        2: 'Egresado',
+        3: 'Salido con pase',
+        4: 'Salido sin pase',
       },
     },
   ];
@@ -34,7 +34,13 @@ export default function StudentsTable({ course }) {
         columns={columns}
         data={students}
         options={{
-          pageSize: 10,
+          paging: false,
+          exportButton: { pdf: true },
+        }}
+        localization={{
+          toolbar: {
+            exportPDFName: 'Guardar como PDF',
+          },
         }}
         onRowClick={(e, row) => {
           history.push(`/student/${row.id}`);
