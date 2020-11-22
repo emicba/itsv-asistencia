@@ -1,7 +1,10 @@
+from datetime import datetime
 from django.contrib.auth.models import User
 from django.db.models import Count, DecimalField
 from django.db.models.query_utils import Q
+from django.utils import timezone
 from rest_framework import serializers
+from rest_framework.request import Request
 from .models import Course, Student, Attendance, Parent, Allergy, Diet, Subject
 from django.db.models.functions import Cast
 
@@ -139,8 +142,18 @@ class SubjectSerializer(serializers.ModelSerializer):
         return meets.order_by('-start_date')
 
     def get_students(self, obj: Subject):
-        students = obj.course.student_set.filter(active=True).values('id', 'order', 'first_name', 'last_name').annotate(attendance_percentage=Cast(
-            Count('attendance', filter=Q(attendance__attended=True))/Count('attendance'), DecimalField(max_digits=5, decimal_places=2))*100)
+        request: Request = self.context['request']
+        from_date, to_date = request.query_params.get('from'), request.query_params.get('to')
+        if from_date and to_date:
+            from_date_obj = datetime.fromtimestamp(int(from_date), tz=timezone.get_current_timezone())
+            to_date_obj = datetime.fromtimestamp(int(to_date), tz=timezone.get_current_timezone())
+            students = obj.course.student_set.filter(active=True).values('id', 'order', 'first_name', 'last_name').annotate(attendance_percentage=Cast(
+                Count('attendance', filter=Q(attendance__start_date__range=(from_date_obj, to_date_obj), attendance__attended=True))
+                /Count('attendance', filter=Q(attendance__start_date__range=(from_date_obj, to_date_obj))), DecimalField(max_digits=5, decimal_places=2))*100)
+        else:
+            students = obj.course.student_set.filter(active=True).values('id', 'order', 'first_name', 'last_name').annotate(attendance_percentage=Cast(
+                Count('attendance', filter=Q(attendance__attended=True))
+                /Count('attendance'), DecimalField(max_digits=5, decimal_places=2))*100)
         return StudentAttendanceSerializer(students, many=True).data
 
     class Meta:

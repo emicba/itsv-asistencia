@@ -140,7 +140,8 @@ class SubjectViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request: Request, *args, **kwargs):
         instance = self.get_object()
-        serializer = SubjectSerializer(instance)
+        serializer = SubjectSerializer(instance=instance,
+                                       context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request: Request, *args, **kwargs):
