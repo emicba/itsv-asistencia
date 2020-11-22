@@ -11,6 +11,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  TextField,
   Typography,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
@@ -24,6 +25,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
 import { xorBy } from 'lodash';
 import SubjectStudentsTable from '../components/SubjectStudentsTable';
+import { DateRangePicker } from '@material-ui/pickers';
 
 const Subject = () => {
   const { id: subjectId } = useParams();
@@ -33,14 +35,22 @@ const Subject = () => {
   const [addState, setAddState] = useState(false);
   const [teachersToAdd, setTeachersToAdd] = useState([]);
   const [selectedTeacher, setSelectedTeacher] = useState('');
+  const [dateRange, setDateRange] = useState([null, null]);
 
   useEffect(() => {
     fetchData(subjectId);
   }, [subjectId]);
 
-  const fetchData = async id => {
+  useEffect(() => {
+    const [dateFrom, dateTo] = dateRange;
+    if (dateFrom && dateTo) {
+      fetchData(subjectId, `from=${+dateFrom / 1000}&to=${+dateTo / 1000}`);
+    }
+  }, [subjectId, dateRange]);
+
+  const fetchData = async (id, params = '') => {
     try {
-      const data = await API.fetch(`subjects/${id}`);
+      const data = await API.fetch(`subjects/${id}?${params}`);
       setSubject(data);
     } catch (error) {
       console.error(error);
@@ -170,9 +180,20 @@ const Subject = () => {
           <Grid container justify="space-between" spacing={2}>
             <Grid item xs={12} sm={6}>
               <Paper>
-                <SubjectStudentsTable
-                  students={subject.students}
-                ></SubjectStudentsTable>
+                <DateRangePicker
+                  startText="Asistencia desde"
+                  endText="Hasta"
+                  value={dateRange}
+                  calendars={1}
+                  onChange={newRange => setDateRange(newRange)}
+                  renderInput={(startProps, endProps) => (
+                    <div className={classes.rangePicker}>
+                      <TextField {...startProps} />
+                      <TextField {...endProps} />
+                    </div>
+                  )}
+                />
+                <SubjectStudentsTable students={subject.students} />
               </Paper>
             </Grid>
 

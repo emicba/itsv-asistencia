@@ -1,12 +1,11 @@
-import { Button, Grid, Typography } from '@material-ui/core';
+import { Button, Grid, TextField, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import API from '../API';
 import AttendanceList from '../components/AttendanceList';
 import Loading from '../components/Loading';
 import 'date-fns';
-import { MuiPickersUtilsProvider, DateTimePicker } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
+import { DateTimePicker } from '@material-ui/pickers';
 import DoneIcon from '@material-ui/icons/Done';
 import { useHistory } from 'react-router-dom';
 
@@ -87,20 +86,20 @@ const Attendance = () => {
             alignItems="center"
           >
             <div>
-              <Typography variant="h5">Subject: {subject.name}</Typography>
               <Typography variant="h5">
-                Course: {subject.course_name}
+                {subject.name} - {subject.course_name}
               </Typography>
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <DateTimePicker
-                  label="Select date and time"
-                  inputVariant="outlined"
-                  value={startTime}
-                  onChange={handleDateChange}
-                />
-              </MuiPickersUtilsProvider>
+              <DateTimePicker
+                label="Seleccionar fecha y hora"
+                inputVariant="outlined"
+                value={startTime}
+                onChange={handleDateChange}
+                renderInput={props => (
+                  <TextField variant="outlined" {...props} />
+                )}
+              />
               <Button
                 variant="contained"
                 color="primary"
@@ -108,7 +107,7 @@ const Attendance = () => {
                 startIcon={<DoneIcon />}
                 onClick={submitAttendance}
               >
-                Submit
+                Enviar
               </Button>
             </div>
           </Grid>

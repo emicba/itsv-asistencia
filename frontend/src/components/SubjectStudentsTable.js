@@ -1,48 +1,44 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from '@material-ui/core';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
-import { useCommonStyles } from '../utils';
+import MaterialTable from 'material-table';
+
+/**
+ * @type {import('material-table').Column[]}
+ */
+const columns = [
+  { title: 'Orden', field: 'order', defaultSort: 'asc' },
+  { title: 'Apellido', field: 'last_name' },
+  { title: 'Nombre', field: 'first_name' },
+  {
+    title: '% de asistencia',
+    field: 'attendance_percentage',
+    render: rowData => (
+      <>
+        {rowData.attendance_percentage
+          ? `${rowData.attendance_percentage}%`
+          : '-'}
+      </>
+    ),
+  },
+];
 
 const StudentsSubjectTable = ({ students }) => {
-  const history = useHistory();
-  const classes = useCommonStyles();
-
-  const studentClickHandler = id => {
-    history.push(`/student/${id}`);
-  };
-
   return (
-    <TableContainer>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Alumno</TableCell>
-            <TableCell>% de asistencia</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {students.map(student => (
-            <TableRow
-              key={student.id}
-              onClick={() => studentClickHandler(student.id)}
-              className={classes.clickable}
-            >
-              <TableCell>
-                {student.last_name} {student.first_name}
-              </TableCell>
-              <TableCell>{student.attendance_percentage}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <MaterialTable
+      title="Estudiantes"
+      columns={columns}
+      data={students}
+      options={{
+        paging: false,
+        exportButton: { pdf: true },
+        draggable: false,
+      }}
+      localization={{
+        toolbar: {
+          exportPDFName: 'Guardar como PDF',
+          searchPlaceholder: 'Buscar',
+        },
+      }}
+    ></MaterialTable>
   );
 };
 

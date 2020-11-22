@@ -30,6 +30,13 @@ export const useCommonStyles = makeStyles(theme => ({
   clickable: {
     cursor: 'pointer',
   },
+  rangePicker: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    padding: '1rem',
+  },
 }));
 
 export const readExcel = file => {
