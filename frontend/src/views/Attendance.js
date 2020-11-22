@@ -40,7 +40,7 @@ const Attendance = () => {
 
   useEffect(() => {
     if (subject) {
-      const defaultValues = subject.course.students.reduce((acc, el) => {
+      const defaultValues = subject.students.reduce((acc, el) => {
         acc[el.id] = false;
         return acc;
       }, {});
@@ -89,7 +89,7 @@ const Attendance = () => {
             <div>
               <Typography variant="h5">Subject: {subject.name}</Typography>
               <Typography variant="h5">
-                Course: {subject.course.name}
+                Course: {subject.course_name}
               </Typography>
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -114,7 +114,7 @@ const Attendance = () => {
           </Grid>
           <div style={{ marginTop: '1rem' }}>
             <AttendanceList
-              students={subject.course.students}
+              students={subject.students}
               attendance={attendance}
               toggleAttendance={toggleAttendance}
               justified={justified}

@@ -8,7 +8,6 @@ import {
   ListItemIcon,
   ListItemText,
   ListSubheader,
-  makeStyles,
   MenuItem,
   Paper,
   Select,
@@ -20,36 +19,16 @@ import API from '../API';
 import Loading from '../components/Loading';
 import AddIcon from '@material-ui/icons/Add';
 import EventNoteIcon from '@material-ui/icons/EventNote';
-import { formatDate } from '../utils';
+import { formatDate, useCommonStyles } from '../utils';
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
 import { xorBy } from 'lodash';
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    justifyContent: 'center',
-    width: '100%',
-    flexDirection: 'column',
-  },
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  header: {
-    width: '100%',
-    padding: '1rem',
-  },
-  chip: {
-    margin: '0 .3rem',
-  },
-}));
+import SubjectStudentsTable from '../components/SubjectStudentsTable';
 
 const Subject = () => {
   const { id: subjectId } = useParams();
   const [subject, setSubject] = useState(null);
-  const classes = useStyles();
+  const classes = useCommonStyles();
   const history = useHistory();
   const [addState, setAddState] = useState(false);
   const [teachersToAdd, setTeachersToAdd] = useState([]);
@@ -129,7 +108,7 @@ const Subject = () => {
             <Grid container justify="space-between">
               <Grid item xs={12} sm={9}>
                 <Typography variant="h5">
-                  {subject.name} - {subject.course.name}
+                  {subject.name} - {subject.course_name}
                 </Typography>
                 <div>
                   {subject.teachers.map(teacher => (
@@ -181,34 +160,49 @@ const Subject = () => {
                     style={{ margin: '2rem', float: 'right' }}
                     startIcon={<AddIcon />}
                   >
-                    Take Attendance
+                    Tomar asistencia
                   </Button>
                 </Link>
               </Grid>
             </Grid>
           </Paper>
-          <List
-            subheader={
-              <ListSubheader component="div" id="nested-list-subheader">
-                Previous meets
-              </ListSubheader>
-            }
-          >
-            {subject.meets.map(x => (
-              <ListItem
-                key={x.start_date}
-                button
-                onClick={() => clickMeetHandler(x.start_date)}
-              >
-                <ListItemIcon>
-                  <EventNoteIcon />
-                </ListItemIcon>
-                <ListItemText style={{ textTransform: 'capitalize' }}>
-                  {formatDate(Date.parse(x.start_date))}
-                </ListItemText>
-              </ListItem>
-            ))}
-          </List>
+
+          <Grid container justify="space-between" spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <Paper>
+                <SubjectStudentsTable
+                  students={subject.students}
+                ></SubjectStudentsTable>
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Paper>
+                <List
+                  subheader={
+                    <ListSubheader component="div" id="nested-list-subheader">
+                      Meets anteriores
+                    </ListSubheader>
+                  }
+                >
+                  {subject.meets.map(x => (
+                    <ListItem
+                      key={x.start_date}
+                      button
+                      onClick={() => clickMeetHandler(x.start_date)}
+                    >
+                      <ListItemIcon>
+                        <EventNoteIcon />
+                      </ListItemIcon>
+                      <ListItemText style={{ textTransform: 'capitalize' }}>
+                        {formatDate(Date.parse(x.start_date))}
+                      </ListItemText>
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
+            </Grid>
+          </Grid>
         </div>
       ) : (
         <Loading />

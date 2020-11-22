@@ -27,6 +27,9 @@ export const useCommonStyles = makeStyles(theme => ({
   chip: {
     margin: '0 .3rem',
   },
+  clickable: {
+    cursor: 'pointer',
+  },
 }));
 
 export const readExcel = file => {
