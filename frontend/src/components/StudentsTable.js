@@ -40,6 +40,7 @@ export default function StudentsTable({ course }) {
         localization={{
           toolbar: {
             exportPDFName: 'Guardar como PDF',
+            searchPlaceholder: 'Buscar',
           },
         }}
         onRowClick={(e, row) => {
@@ -51,8 +52,8 @@ export default function StudentsTable({ course }) {
             return new Promise(resolve => {
               setTimeout(async () => {
                 try {
-                  API.students.add(newStudent);
-                  setStudents(prevState => [...prevState, newStudent]);
+                  const data = await API.students.add(newStudent);
+                  setStudents(prevState => [...prevState, data]);
                 } catch (error) {
                   console.error(error);
                 }

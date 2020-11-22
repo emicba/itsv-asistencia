@@ -50,7 +50,7 @@ export default {
         body: JSON.stringify(data),
       });
       if (response.ok) {
-        return;
+        return response.json();
       }
       const error = new Error('Unable to add student.');
       throw error;
