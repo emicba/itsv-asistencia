@@ -38,7 +38,7 @@ export default function Login() {
   const [password, setPassword] = useState(undefined);
   const [error, setError] = useState(null);
 
-  const [, setUser] = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
 
   const usernameHandler = e => {
     setUsername(e.target.value);
@@ -50,9 +50,10 @@ export default function Login() {
     e.preventDefault();
     setError(null);
     try {
-      const { token } = await API.login(username, password);
-      setUser({ token });
+      const { token, role } = await API.login(username, password);
+      setUser({ token, role });
       localStorage.setItem('itsv-asistencia-token', token);
+      localStorage.setItem('itsv-asistencia-role', role);
     } catch (error) {
       setError(error.message);
     }

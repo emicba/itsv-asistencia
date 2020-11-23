@@ -86,7 +86,7 @@ const routes = [
 ];
 
 function App() {
-  const [user] = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   return (
     <div>

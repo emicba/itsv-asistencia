@@ -84,7 +84,7 @@ export default function PersistentDrawerLeft({ routes }) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [, setUser] = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -125,6 +125,7 @@ export default function PersistentDrawerLeft({ routes }) {
               onClick={() => {
                 setUser(null);
                 localStorage.removeItem('itsv-asistencia-token');
+                localStorage.removeItem('itsv-asistencia-role');
               }}
             >
               Cerrar sesión
