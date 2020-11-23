@@ -133,9 +133,9 @@ class SubjectViewSet(viewsets.ModelViewSet):
     def list(self, request: Request, *args, **kwargs):
         user: User = request.user
         if user.is_staff:
-            subjects = Subject.objects.filter(active=True)
+            subjects = Subject.objects.filter(active=True).order_by('course__name')
         else:
-            subjects = Subject.objects.filter(teachers=user, active=True)
+            subjects = Subject.objects.filter(teachers=user, active=True).order_by('course__name')
 
         serializer = SubjectMinSerializer(subjects, many=True, read_only=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -230,6 +230,7 @@ class TeacherViewSet(viewsets.ModelViewSet):
                     instance.auth_token.delete()
                 return Response(serializer.data, status=HTTP_200_OK)
         return Response({'message': 'Can\'t update user', 'errors': serializer.error_messages}, status=HTTP_400_BAD_REQUEST)
+
 
 class ObtainAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
