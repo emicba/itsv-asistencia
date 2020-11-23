@@ -15,6 +15,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import GitHubIcon from '@material-ui/icons/GitHub';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 import { UserContext } from '../UserContext';
@@ -94,6 +95,10 @@ export default function PersistentDrawerLeft({ routes }) {
     setOpen(false);
   };
 
+  const openGithub = () => {
+    window.open('https://github.com/emicba/itsv-asistencia', '_blank');
+  };
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -135,7 +140,7 @@ export default function PersistentDrawerLeft({ routes }) {
       </AppBar>
       <Drawer
         className={classes.drawer}
-        variant="persistent"
+        variant="temporary"
         anchor="left"
         open={open}
         classes={{
@@ -167,6 +172,11 @@ export default function PersistentDrawerLeft({ routes }) {
             </Link>
           ))}
         </List>
+        <div style={{ alignSelf: 'center', marginTop: 'auto' }}>
+          <IconButton onClick={openGithub} style={{ color: '#ccc' }}>
+            <GitHubIcon />
+          </IconButton>
+        </div>
       </Drawer>
     </div>
   );
