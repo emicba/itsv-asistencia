@@ -1,7 +1,11 @@
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router-dom';
 import PersistentDrawerLeft from './components/Drawer';
-import Home from './views/Home';
 import Login from './views/Login';
 import Courses from './views/Courses';
 import Course from './views/Course';
@@ -14,21 +18,12 @@ import Meet from './views/Meet';
 import Student from './views/Student';
 import Users from './views/Users';
 import {
-  Home as HomeIcon,
   Class as ClassIcon,
   Folder as FolderIcon,
   AccountCircle as AccountCircleIcon,
 } from '@material-ui/icons';
 
 const routes = [
-  {
-    name: 'Inicio',
-    path: '/',
-    exact: true,
-    component: <Home />,
-    showInDrawer: true,
-    icon: <HomeIcon />,
-  },
   {
     name: 'Cursos',
     path: '/courses',
@@ -80,10 +75,21 @@ const routes = [
     path: '/users/',
     exact: true,
     component: <Users />,
-    showInDrawer: true,
+    adminRequired: true,
     icon: <AccountCircleIcon />,
   },
+  {
+    name: 'Inicio',
+    path: '/',
+    component: <Redirect to="/subjects" />,
+  },
 ];
+
+const getDrawerRoutes = user => {
+  return routes.filter(
+    x => x.showInDrawer || (x.adminRequired && user.role === 'admin'),
+  );
+};
 
 function App() {
   const { user } = useContext(UserContext);
@@ -92,7 +98,7 @@ function App() {
     <div>
       {!!user ? (
         <Router>
-          <PersistentDrawerLeft routes={routes.filter(x => x.showInDrawer)} />
+          <PersistentDrawerLeft routes={getDrawerRoutes(user)} />
           <Container style={{ marginTop: '1rem' }}>
             <Switch>
               {routes.map(route => (

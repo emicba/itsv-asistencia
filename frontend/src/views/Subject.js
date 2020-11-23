@@ -14,7 +14,7 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import API from '../API';
 import Loading from '../components/Loading';
@@ -26,6 +26,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { xorBy } from 'lodash';
 import SubjectStudentsTable from '../components/SubjectStudentsTable';
 import { DateRangePicker } from '@material-ui/pickers';
+import { UserContext } from '../UserContext';
 
 const Subject = () => {
   const { id: subjectId } = useParams();
@@ -36,6 +37,8 @@ const Subject = () => {
   const [teachersToAdd, setTeachersToAdd] = useState([]);
   const [selectedTeacher, setSelectedTeacher] = useState('');
   const [dateRange, setDateRange] = useState([null, null]);
+  const { user } = useContext(UserContext);
+  const canEdit = user.role === 'admin';
 
   useEffect(() => {
     fetchData(subjectId);
@@ -126,40 +129,44 @@ const Subject = () => {
                       key={teacher.username}
                       className={classes.chip}
                       label={`${teacher.first_name} ${teacher.last_name}`}
-                      onDelete={() => removeTeacherHandler(teacher.username)}
+                      onDelete={
+                        canEdit &&
+                        (() => removeTeacherHandler(teacher.username))
+                      }
                       deleteIcon={<CloseIcon />}
                     ></Chip>
                   ))}
-                  {addState ? (
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <Select
-                        value={selectedTeacher}
-                        onChange={handleChange}
-                        autoWidth
-                        style={{ width: '15rem' }}
+                  {canEdit &&
+                    (addState ? (
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <Select
+                          value={selectedTeacher}
+                          onChange={handleChange}
+                          autoWidth
+                          style={{ width: '15rem' }}
+                        >
+                          {teachersToAdd.map(x => (
+                            <MenuItem key={x.username} value={x.username}>
+                              {x.first_name} {x.last_name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        <IconButton onClick={addTeacherHandler}>
+                          <CheckIcon />
+                        </IconButton>
+                        <IconButton onClick={() => setAddState(false)}>
+                          <CloseIcon />
+                        </IconButton>
+                      </div>
+                    ) : (
+                      <IconButton
+                        onClick={addStateHandler}
+                        edge="end"
+                        aria-label="add"
                       >
-                        {teachersToAdd.map(x => (
-                          <MenuItem key={x.username} value={x.username}>
-                            {x.first_name} {x.last_name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                      <IconButton onClick={addTeacherHandler}>
-                        <CheckIcon />
+                        <AddIcon />
                       </IconButton>
-                      <IconButton onClick={() => setAddState(false)}>
-                        <CloseIcon />
-                      </IconButton>
-                    </div>
-                  ) : (
-                    <IconButton
-                      onClick={addStateHandler}
-                      edge="end"
-                      aria-label="add"
-                    >
-                      <AddIcon />
-                    </IconButton>
-                  )}
+                    ))}
                 </div>
               </Grid>
               <Grid item xs={12} sm={3}>

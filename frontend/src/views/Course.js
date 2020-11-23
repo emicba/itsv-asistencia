@@ -1,16 +1,18 @@
 import { Button, Paper, Typography, Grid } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import API from '../API';
 import StudentsTable from '../components/StudentsTable';
 import AddIcon from '@material-ui/icons/Add';
 import Loading from '../components/Loading';
 import { readExcel, useCommonStyles } from '../utils';
+import { UserContext } from '../UserContext';
 
 export default function Course() {
   const { id: courseId } = useParams();
   const [course, setCourse] = useState(null);
   const classes = useCommonStyles();
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     fetchCourse(courseId);
@@ -76,26 +78,28 @@ export default function Course() {
                   Cantidad de estudiantes: {course.students.length}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={3}>
-                <input
-                  id="upload-file"
-                  type="file"
-                  accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                  onChange={e => fileSelectedHandler(e)}
-                  style={{ display: 'none' }}
-                />
-                <label htmlFor="upload-file">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    component="span"
-                    style={{ margin: '2rem', float: 'right' }}
-                    startIcon={<AddIcon />}
-                  >
-                    Importar estudiantes
-                  </Button>
-                </label>
-              </Grid>
+              {user.role === 'admin' && (
+                <Grid item xs={12} sm={3}>
+                  <input
+                    id="upload-file"
+                    type="file"
+                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    onChange={e => fileSelectedHandler(e)}
+                    style={{ display: 'none' }}
+                  />
+                  <label htmlFor="upload-file">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      component="span"
+                      style={{ margin: '2rem', float: 'right' }}
+                      startIcon={<AddIcon />}
+                    >
+                      Importar estudiantes
+                    </Button>
+                  </label>
+                </Grid>
+              )}
             </Grid>
           </Paper>
 

@@ -20,7 +20,7 @@ import API from '../API';
 import Alert from './Alert';
 
 export default function SubjectItem(props) {
-  const courseName = props.courseName;
+  const { courseName, canEdit } = props;
   const [checked, setChecked] = useState(false);
   const [add, setAdd] = useState(false);
   const [subjects, setSubjects] = useState(props.subjects);
@@ -77,11 +77,13 @@ export default function SubjectItem(props) {
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={courseName} style={{ marginLeft: '1rem' }} />
-            <ListItemSecondaryAction onClick={() => setAdd(true)}>
-              <IconButton edge="end" aria-label="add">
-                <AddIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
+            {canEdit && (
+              <ListItemSecondaryAction onClick={() => setAdd(true)}>
+                <IconButton edge="end" aria-label="add">
+                  <AddIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            )}
           </ListItem>
           <Fade in={checked}>
             <List style={{ marginLeft: '7rem' }}>
@@ -96,16 +98,18 @@ export default function SubjectItem(props) {
                         <SubjectOutlinedIcon />
                       </ListItemIcon>
                       <ListItemText primary={subject.name} />
-                      <ListItemSecondaryAction>
-                        <IconButton
-                          edge="end"
-                          onClick={() => {
-                            setSelectedSubject(subject);
-                          }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </ListItemSecondaryAction>
+                      {canEdit && (
+                        <ListItemSecondaryAction>
+                          <IconButton
+                            edge="end"
+                            onClick={() => {
+                              setSelectedSubject(subject);
+                            }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </ListItemSecondaryAction>
+                      )}
                     </ListItem>
                   </div>
                 ))}
