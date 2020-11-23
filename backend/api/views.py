@@ -2,6 +2,8 @@ from datetime import datetime
 from django.http.response import JsonResponse
 from django.contrib.auth.models import User
 from rest_framework import viewsets
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.routers import APIRootView
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
@@ -228,3 +230,13 @@ class TeacherViewSet(viewsets.ModelViewSet):
                     instance.auth_token.delete()
                 return Response(serializer.data, status=HTTP_200_OK)
         return Response({'message': 'Can\'t update user', 'errors': serializer.error_messages}, status=HTTP_400_BAD_REQUEST)
+
+class ObtainAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        role = 'admin' if user.is_staff else 'teacher'
+        return Response({'token': token.key, 'role': role})
