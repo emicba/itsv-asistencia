@@ -1,3 +1,5 @@
+const API_URL = process.env.REACT_APP_API_URL;
+
 const headers = () => ({
   headers: {
     accept: 'application/json',
@@ -13,7 +15,7 @@ const removeToken = () => {
 
 export default {
   async login(username, password) {
-    const response = await fetch('http://localhost:8000/auth/', {
+    const response = await fetch(`${API_URL}/auth/`, {
       method: 'POST',
       headers: {
         accept: 'application/json',
@@ -31,7 +33,7 @@ export default {
     throw error;
   },
   async fetch(path) {
-    const response = await fetch(`http://localhost:8000/${path}`, {
+    const response = await fetch(`${API_URL}/${path}`, {
       ...headers(),
     });
     const data = await response.json();
@@ -44,7 +46,7 @@ export default {
   },
   students: {
     async add(data) {
-      const response = await fetch(`http://localhost:8000/students/`, {
+      const response = await fetch(`${API_URL}/students/`, {
         method: 'POST',
         ...headers(),
         body: JSON.stringify(data),
@@ -56,7 +58,7 @@ export default {
       throw error;
     },
     async delete(id) {
-      const response = await fetch(`http://localhost:8000/students/${id}`, {
+      const response = await fetch(`${API_URL}/students/${id}`, {
         method: 'DELETE',
         ...headers(),
       });
@@ -67,7 +69,7 @@ export default {
       throw error;
     },
     async update(id, data) {
-      const response = await fetch(`http://localhost:8000/students/${id}/`, {
+      const response = await fetch(`${API_URL}/students/${id}/`, {
         method: 'PUT',
         ...headers(),
         body: JSON.stringify(data),
@@ -81,7 +83,7 @@ export default {
   },
   attendace: {
     async post(data) {
-      const response = await fetch(`http://localhost:8000/attendances/`, {
+      const response = await fetch(`${API_URL}/attendances/`, {
         method: 'POST',
         ...headers(),
         body: JSON.stringify(data),
@@ -95,7 +97,7 @@ export default {
   },
   subjects: {
     async create(data) {
-      const response = await fetch(`http://localhost:8000/subjects/`, {
+      const response = await fetch(`${API_URL}/subjects/`, {
         method: 'POST',
         ...headers(),
         body: JSON.stringify(data),
@@ -107,20 +109,17 @@ export default {
       throw error;
     },
     async addTeacher(subjectId, username) {
-      const response = await fetch(
-        `http://localhost:8000/subjects/${subjectId}/`,
-        {
-          method: 'PATCH',
-          ...headers(),
-          body: JSON.stringify({
-            op: 'add',
-            path: 'teachers',
-            value: {
-              username,
-            },
-          }),
-        },
-      );
+      const response = await fetch(`${API_URL}/subjects/${subjectId}/`, {
+        method: 'PATCH',
+        ...headers(),
+        body: JSON.stringify({
+          op: 'add',
+          path: 'teachers',
+          value: {
+            username,
+          },
+        }),
+      });
       const data = await response.json();
       if (response.ok) {
         return;
@@ -129,20 +128,17 @@ export default {
       throw error;
     },
     async removeTeacher(subjectId, username) {
-      const response = await fetch(
-        `http://localhost:8000/subjects/${subjectId}/`,
-        {
-          method: 'PATCH',
-          ...headers(),
-          body: JSON.stringify({
-            op: 'remove',
-            path: 'teachers',
-            value: {
-              username,
-            },
-          }),
-        },
-      );
+      const response = await fetch(`${API_URL}/subjects/${subjectId}/`, {
+        method: 'PATCH',
+        ...headers(),
+        body: JSON.stringify({
+          op: 'remove',
+          path: 'teachers',
+          value: {
+            username,
+          },
+        }),
+      });
       const data = await response.json();
       if (response.ok) {
         return;
@@ -151,7 +147,7 @@ export default {
       throw error;
     },
     async delete(id) {
-      const response = await fetch(`http://localhost:8000/subjects/${id}`, {
+      const response = await fetch(`${API_URL}/subjects/${id}`, {
         method: 'DELETE',
         ...headers(),
       });
@@ -164,7 +160,7 @@ export default {
   },
   users: {
     async create(data) {
-      const response = await fetch(`http://localhost:8000/teachers/`, {
+      const response = await fetch(`${API_URL}/teachers/`, {
         method: 'POST',
         ...headers(),
         body: JSON.stringify(data),
@@ -176,7 +172,7 @@ export default {
       throw error;
     },
     async delete(id) {
-      const response = await fetch(`http://localhost:8000/teachers/${id}`, {
+      const response = await fetch(`${API_URL}/teachers/${id}`, {
         method: 'DELETE',
         ...headers(),
       });
@@ -187,7 +183,7 @@ export default {
       throw error;
     },
     async update(id, data) {
-      const response = await fetch(`http://localhost:8000/teachers/${id}/`, {
+      const response = await fetch(`${API_URL}/teachers/${id}/`, {
         method: 'PATCH',
         ...headers(),
         body: JSON.stringify(data),

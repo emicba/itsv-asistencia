@@ -9,4 +9,4 @@ RUN python -m pip install -r requirements.txt
 RUN apk del gcc musl-dev
 WORKDIR /app
 ADD . /app
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi"]
+CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "config.wsgi"]
