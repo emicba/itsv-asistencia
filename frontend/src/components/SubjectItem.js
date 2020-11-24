@@ -63,9 +63,9 @@ export default function SubjectItem(props) {
   }, [selectedSubject]);
 
   return (
-    <div>
+    <>
       {checked ? (
-        <div>
+        <>
           <ListItem
             style={{ marginLeft: '2rem' }}
             button
@@ -73,7 +73,7 @@ export default function SubjectItem(props) {
           >
             <ListItemAvatar>
               <Avatar>
-                <FolderIcon />
+                <SubjectOutlinedIcon />
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={courseName} style={{ marginLeft: '1rem' }} />
@@ -95,7 +95,7 @@ export default function SubjectItem(props) {
                       onClick={() => handleSubjectClick(subject.id)}
                     >
                       <ListItemIcon>
-                        <SubjectOutlinedIcon />
+                        <FolderIcon />
                       </ListItemIcon>
                       <ListItemText primary={subject.name} />
                       {canEdit && (
@@ -146,22 +146,20 @@ export default function SubjectItem(props) {
               )}
             </List>
           </Fade>
-        </div>
+        </>
       ) : (
-        <div>
-          <ListItem
-            style={{ marginLeft: '2rem' }}
-            button
-            onClick={() => handleListItemClick()}
-          >
-            <ListItemAvatar>
-              <Avatar>
-                <FolderIcon />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={courseName} style={{ marginLeft: '1rem' }} />
-          </ListItem>
-        </div>
+        <ListItem
+          style={{ marginLeft: '2rem' }}
+          button
+          onClick={() => handleListItemClick()}
+        >
+          <ListItemAvatar>
+            <Avatar>
+              <SubjectOutlinedIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText primary={courseName} style={{ marginLeft: '1rem' }} />
+        </ListItem>
       )}
       {!!selectedSubject && (
         <Alert
@@ -171,6 +169,6 @@ export default function SubjectItem(props) {
           agreeFunction={() => deleteSubjectHandler(selectedSubject.id)}
         />
       )}
-    </div>
+    </>
   );
 }

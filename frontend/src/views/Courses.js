@@ -8,7 +8,7 @@ import {
   ListItemText,
 } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import FolderIcon from '@material-ui/icons/Folder';
+import ClassIcon from '@material-ui/icons/Class';
 
 const CourseTable = () => {
   const [courses, setCourses] = useState([]);
@@ -45,7 +45,7 @@ const CourseTable = () => {
             >
               <ListItemAvatar>
                 <Avatar>
-                  <FolderIcon />
+                  <ClassIcon />
                 </Avatar>
               </ListItemAvatar>
               <ListItemText
