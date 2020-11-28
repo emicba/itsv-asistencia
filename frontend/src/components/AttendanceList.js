@@ -29,16 +29,16 @@ const AttendanceList = ({
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Attended</TableCell>
-            <TableCell>Justified</TableCell>
+            <TableCell>Nombre</TableCell>
+            <TableCell>Asistencia</TableCell>
+            <TableCell>Justificado</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {students.map(student => (
             <TableRow key={student.id}>
               <TableCell>
-                {`${student.first_name} ${student.last_name}`}
+                {`${student.last_name} ${student.first_name}`}
               </TableCell>
               <TableCell>
                 <Checkbox

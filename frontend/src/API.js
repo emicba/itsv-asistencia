@@ -1,3 +1,5 @@
+const API_URL = process.env.REACT_APP_API_URL;
+
 const headers = () => ({
   headers: {
     accept: 'application/json',
@@ -6,9 +8,14 @@ const headers = () => ({
   },
 });
 
+const removeToken = () => {
+  localStorage.removeItem('itsv-asistencia-token');
+  window.location.reload();
+};
+
 export default {
   async login(username, password) {
-    const response = await fetch('http://localhost:8000/auth/', {
+    const response = await fetch(`${API_URL}/auth/`, {
       method: 'POST',
       headers: {
         accept: 'application/json',
@@ -26,31 +33,32 @@ export default {
     throw error;
   },
   async fetch(path) {
-    const response = await fetch(`http://localhost:8000/${path}`, {
+    const response = await fetch(`${API_URL}/${path}`, {
       ...headers(),
     });
     const data = await response.json();
     if (response.ok) {
       return data;
     }
+    if (response.status === 401) removeToken();
     const error = new Error(data.message || 'Unable to fetch.');
     throw error;
   },
   students: {
     async add(data) {
-      const response = await fetch(`http://localhost:8000/students/`, {
+      const response = await fetch(`${API_URL}/students/`, {
         method: 'POST',
         ...headers(),
         body: JSON.stringify(data),
       });
       if (response.ok) {
-        return;
+        return response.json();
       }
       const error = new Error('Unable to add student.');
       throw error;
     },
     async delete(id) {
-      const response = await fetch(`http://localhost:8000/students/${id}`, {
+      const response = await fetch(`${API_URL}/students/${id}`, {
         method: 'DELETE',
         ...headers(),
       });
@@ -61,7 +69,7 @@ export default {
       throw error;
     },
     async update(id, data) {
-      const response = await fetch(`http://localhost:8000/students/${id}/`, {
+      const response = await fetch(`${API_URL}/students/${id}/`, {
         method: 'PUT',
         ...headers(),
         body: JSON.stringify(data),
@@ -75,7 +83,7 @@ export default {
   },
   attendace: {
     async post(data) {
-      const response = await fetch(`http://localhost:8000/attendances/`, {
+      const response = await fetch(`${API_URL}/attendances/`, {
         method: 'POST',
         ...headers(),
         body: JSON.stringify(data),
@@ -84,6 +92,106 @@ export default {
         return;
       }
       const error = new Error('Unable to take attendance.');
+      throw error;
+    },
+  },
+  subjects: {
+    async create(data) {
+      const response = await fetch(`${API_URL}/subjects/`, {
+        method: 'POST',
+        ...headers(),
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+      const error = new Error('Unable to add subject.');
+      throw error;
+    },
+    async addTeacher(subjectId, username) {
+      const response = await fetch(`${API_URL}/subjects/${subjectId}/`, {
+        method: 'PATCH',
+        ...headers(),
+        body: JSON.stringify({
+          op: 'add',
+          path: 'teachers',
+          value: {
+            username,
+          },
+        }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        return;
+      }
+      const error = new Error(data.message || 'Unable to add teacher.');
+      throw error;
+    },
+    async removeTeacher(subjectId, username) {
+      const response = await fetch(`${API_URL}/subjects/${subjectId}/`, {
+        method: 'PATCH',
+        ...headers(),
+        body: JSON.stringify({
+          op: 'remove',
+          path: 'teachers',
+          value: {
+            username,
+          },
+        }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        return;
+      }
+      const error = new Error(data.message || 'Unable to remove teacher.');
+      throw error;
+    },
+    async delete(id) {
+      const response = await fetch(`${API_URL}/subjects/${id}`, {
+        method: 'DELETE',
+        ...headers(),
+      });
+      if (response.ok) {
+        return;
+      }
+      const error = new Error('Unable to remove subject.');
+      throw error;
+    },
+  },
+  users: {
+    async create(data) {
+      const response = await fetch(`${API_URL}/teachers/`, {
+        method: 'POST',
+        ...headers(),
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+      const error = new Error('Unable to add user.');
+      throw error;
+    },
+    async delete(id) {
+      const response = await fetch(`${API_URL}/teachers/${id}`, {
+        method: 'DELETE',
+        ...headers(),
+      });
+      if (response.ok) {
+        return;
+      }
+      const error = new Error('Unable to remove user.');
+      throw error;
+    },
+    async update(id, data) {
+      const response = await fetch(`${API_URL}/teachers/${id}/`, {
+        method: 'PATCH',
+        ...headers(),
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+      const error = new Error('Unable to update user.');
       throw error;
     },
   },

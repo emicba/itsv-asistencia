@@ -1,9 +1,10 @@
 from django.urls import include, path
 from rest_framework import routers
-from .views import CourseViewSet, StudentViewSet, AttendanceViewSet, ParentViewSet, AllergyViewSet, DietViewSet, SubjectViewSet
-from rest_framework.authtoken import views as auth_views
+from rest_framework.routers import DefaultRouter
+from .views import RootView, CourseViewSet, StudentViewSet, AttendanceViewSet, ParentViewSet, AllergyViewSet, DietViewSet, SubjectViewSet, TeacherViewSet, ObtainAuthToken
 
-router = routers.DefaultRouter()
+router: DefaultRouter = routers.DefaultRouter()
+router.APIRootView = RootView
 router.register(r'courses', CourseViewSet)
 router.register(r'students', StudentViewSet)
 router.register(r'attendances', AttendanceViewSet)
@@ -11,8 +12,9 @@ router.register(r'parents', ParentViewSet)
 router.register(r'allergies', AllergyViewSet)
 router.register(r'diets', DietViewSet)
 router.register('subjects', SubjectViewSet)
+router.register('teachers', TeacherViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('auth/', auth_views.obtain_auth_token)
+    path('auth/', ObtainAuthToken.as_view())
 ]

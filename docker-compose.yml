@@ -1,23 +1,23 @@
-version: '3'
+version: '3.4'
 
 services:
   backend:
-    container_name: backend
-    image: itsv-asistencia-backend
+    container_name: itsv-asistencia-backend
+    image: itsv-asistencia-backend:prod
     build:
       context: backend
       dockerfile: Dockerfile
     env_file: .env
     ports:
-      - 8000:8000
+      - "8000:8000"
 
   frontend:
-    container_name: frontend
-    image: itsv-asistencia-frontend
+    container_name: itsv-asistencia-frontend
+    image: itsv-asistencia-frontend:prod
     build:
       context: frontend
       dockerfile: Dockerfile
-    environment:
-      NODE_ENV: production
+      args:
+        - REACT_APP_API_URL=${REACT_APP_API_URL}
     ports:
-      - 8080:80
+      - "8080:80"

@@ -15,8 +15,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+import GitHubIcon from '@material-ui/icons/GitHub';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 import { UserContext } from '../UserContext';
@@ -86,7 +85,7 @@ export default function PersistentDrawerLeft({ routes }) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [user, setUser] = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -96,11 +95,15 @@ export default function PersistentDrawerLeft({ routes }) {
     setOpen(false);
   };
 
+  const openGithub = () => {
+    window.open('https://github.com/emicba/itsv-asistencia', '_blank');
+  };
+
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar
-        position="fixed"
+        position="static"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
         })}
@@ -121,31 +124,23 @@ export default function PersistentDrawerLeft({ routes }) {
           </Typography>
 
           <Button color="inherit" className={classes.loginButton}>
-            {user ? (
-              <Link
-                to="/login"
-                style={{ textDecoration: 'none', color: 'inherit' }}
-                onClick={() => {
-                  setUser(null);
-                  localStorage.removeItem('itsv-asistencia-token');
-                }}
-              >
-                Logout
-              </Link>
-            ) : (
-              <Link
-                to="/login"
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
-                Login
-              </Link>
-            )}
+            <Link
+              to="/"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+              onClick={() => {
+                setUser(null);
+                localStorage.removeItem('itsv-asistencia-token');
+                localStorage.removeItem('itsv-asistencia-role');
+              }}
+            >
+              Cerrar sesión
+            </Link>
           </Button>
         </Toolbar>
       </AppBar>
       <Drawer
         className={classes.drawer}
-        variant="persistent"
+        variant="temporary"
         anchor="left"
         open={open}
         classes={{
@@ -171,14 +166,17 @@ export default function PersistentDrawerLeft({ routes }) {
               onClick={handleDrawerClose}
             >
               <ListItem button key={route.name}>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
+                <ListItemIcon>{route.icon}</ListItemIcon>
                 <ListItemText primary={route.name} />
               </ListItem>
             </Link>
           ))}
         </List>
+        <div style={{ alignSelf: 'center', marginTop: 'auto' }}>
+          <IconButton onClick={openGithub} style={{ color: '#ccc' }}>
+            <GitHubIcon />
+          </IconButton>
+        </div>
       </Drawer>
     </div>
   );
